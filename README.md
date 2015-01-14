@@ -1,6 +1,6 @@
 This is to be put ontop of Emacs Prelude, as personal settings.
 
-i.e.
+After emacs for osx, and prelude installation:
 --
 
     git clone https://github.com/escherize/prelude-dotemacs.git ~/.emacs.d/personal
