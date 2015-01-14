@@ -6,7 +6,7 @@ After emacs for osx, and prelude installation:
     git clone https://github.com/escherize/prelude-dotemacs.git ~/.emacs.d/personal
 
 
-Here is what modules.el looks like:
+Here is what prelude-modules.el looks like:
 
 
     ;;; Uncomment the modules you'd like to use and restart Prelude afterwards
