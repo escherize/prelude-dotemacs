@@ -35,7 +35,6 @@
 
 ;; Helm settings:
 (helm-autoresize-mode 1)
-(global-set-key (kbd "C-c C-s") 'helm-occur)
 
 
 (unless (string-match "apple-darwin" system-configuration)
@@ -55,6 +54,8 @@
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 
+
+
 (defun save-macro (name)
   ;; Save a macro.
 ;; Take a name as argument
@@ -68,6 +69,16 @@
   (insert-kbd-macro name)
   (newline)
   (switch-to-buffer nil))
+
+
+;; multiple cursor mode defaults.
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;; Needed installation.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; use prelude to auto-install whatever the fuck packages I want.
 (add-to-list 'prelude-packages 'clj-refactor)
