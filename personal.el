@@ -32,7 +32,7 @@
 
 ;; Navigate windows with shift-<arrows>
 (windmove-default-keybindings 'shift)
-(setq windmove-wrap-around "no")
+(setq windmove-wrap-around nil)
 
 ;; Helm settings:
 (helm-autoresize-mode 1)
@@ -95,11 +95,12 @@
 (add-to-list 'prelude-packages 'wsd-mode)
 (add-to-list 'prelude-packages 'github-browse-file)
 (add-to-list 'prelude-packages 'guide-key)
-(add-to-list 'prelude-packages 'darkburn-theme)
 (add-to-list 'prelude-packages 'neotree)
 (add-to-list 'prelude-packages 'align-cljlet)
-(add-to-list 'prelude-packages 'powerline)
 (add-to-list 'prelude-packages 'moe-theme)
+(add-to-list 'prelude-packages 'spaceline)
+(add-to-list 'prelude-packages 'highlight-symbol)
+(add-to-list 'prelude-packages 'perspective)
 
 (prelude-install-packages)
 
@@ -107,21 +108,26 @@
 ;;  END use prelude to auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'powerline)
-(require 'moe-theme)
-(moe-dark)
-(powerline-moe-theme)
+(require 'perspective)
+(global-set-key (kbd "s-}") 'persp-next)
+(global-set-key (kbd "s-{") 'persp-prev)
+
+(require 'spaceline-config)
+(spaceline-spacemacs-theme)
+(load-theme 'spacemacs-dark)
+
 
 (require'guide-key)
-(setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c" "C-h"))
+(setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c" "C-h" "C-x x"))
 (setq guide-key/recursive-key-sequence-flag t)
 (setq guide-key/idle-delay 1.0)
 (guide-key-mode 1)  ; Enable guide-key-mode
 
-;; Auto-start on 'any markup' modes
+;; Auto-start emmet on 'any markup' modes
 (add-hook 'sgml-mode-hook 'emmet-mode)
 (add-hook 'css-mode-hook  'emmet-mode)
 (add-hook 'web-mode-hook  'emmet-mode)
+(setq emmet-preview-default t)
 
 (setq helm-display-header-line nil) ;; t by default
 (set-face-attribute 'helm-source-header nil :height 0.1)
@@ -139,9 +145,37 @@
                                (local-set-key (kbd ";") 'sp-comment)))
 
 (global-set-key (kbd "C-c h s") 'helm-do-ag)
-(global-set-key (kbd "C-c C-s") 'helm-occur)
+
+(global-set-key (kbd "<C-return>") 'highlight-symbol)
 
 (setq magit-last-seen-setup-instructions "1.4.0")
+
+(defun my-python-config ()
+  "Modify keymaps used by `python-mode'."
+  (local-set-key (kbd "M .") 'jedi:goto-definition)
+  (local-set-key (kbd "M ,") 'jedi:goto-definition-pop-marker))
+(add-hook 'python-mode-hook 'my-python-config)
+
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
+
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
+(elpy-enable)
+
+(global-set-key (kbd "C-c j") 'avy-goto-subword-1)
+;;(global-set-key (kbd "s-w") 'ace-window)
+
+(persp-mode 1)
+
+(defun figwheel-repl ()
+  "Use call this when connecting to a figwheel repl.
+Source is over at: http://yogthos.net/posts/2015-06-16-Figwheel-nREPL.html"
+  (interactive)
+  (insert "(use 'figwheel-sidecar.repl-api)
+(cljs-repl)
+"))
 
 (provide 'personal)
 ;;; personal.el ends here
