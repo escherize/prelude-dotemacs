@@ -10,7 +10,8 @@
      ("str" . "clojure.string")
      ("walk" . "clojure.walk")
      ("zip" . "clojure.zip")
-     ("s" . "schema.core"))) t)
+     ("s" . "schema.core")
+     ("h" . "hiccup.core"))) t)
  '(cljr-magic-requires :prompt)
  '(custom-safe-themes
    (quote

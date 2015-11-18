@@ -50,11 +50,9 @@
 ;; Save here instead of littering current directory with emacs backup files
 (setq backup-directory-alist `(("." . "~/.saves")))
 
-
 ;; Font size
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
-
 
 ;; multiple cursor mode defaults.
 
@@ -100,7 +98,9 @@
 (add-to-list 'prelude-packages 'moe-theme)
 (add-to-list 'prelude-packages 'spaceline)
 (add-to-list 'prelude-packages 'highlight-symbol)
-(add-to-list 'prelude-packages 'perspective)
+(add-to-list 'prelude-packages 'edit-server)
+;;(add-to-list 'prelude-packages 'nyan-mode)
+(add-to-list 'prelude-packages 'eyebrowse)
 
 (prelude-install-packages)
 
@@ -108,13 +108,72 @@
 ;;  END use prelude to auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'perspective)
-(global-set-key (kbd "s-}") 'persp-next)
-(global-set-key (kbd "s-{") 'persp-prev)
+(require 'eyebrowse)
+(eyebrowse-mode t)
+
+(require 'edit-server) ;; needed for chrome Edit with Emacs
+(edit-server-start)
 
 (require 'spaceline-config)
 (spaceline-spacemacs-theme)
 (load-theme 'spacemacs-dark)
+
+;;;; spaceline =medium= settings
+
+;;; integrates with eyebrowse.
+(spaceline-toggle-workspace-number-on)
+;;; integrates with window-numbering.
+(spaceline-toggle-window-number-off)
+;;; shows the current evil state, integrates with evil.
+(spaceline-toggle-evil-state-off)
+;;; integrates with anzu.
+(spaceline-toggle-anzu-off)
+;;; the standard marker denoting whether the buffer is modified or not.
+(spaceline-toggle-buffer-modified-on)
+;;; the size of the buffer.
+(spaceline-toggle-buffer-size-off)
+;;; the name of the buffer.
+(spaceline-toggle-buffer-id-off)
+;;; the host for remote buffers.
+(spaceline-toggle-remote-host-off)
+;;; the current major mode.
+(spaceline-toggle-major-mode-on)
+;;; number of flycheck errors, integrates with flyche(spaceline-toggle-ck)
+(spaceline-toggle-flycheck-error-off)
+;;; number of flycheck warnings, integrates with flycheck.
+(spaceline-toggle-flycheck-warning-off)
+;;; number of flycheck notifications, integrates with flycheck.
+(spaceline-toggle-flycheck-info-off)
+;;; the currently enabled minor modes. The output of this segment can be tweaked with diminish.
+(spaceline-toggle-minor-modes-on)
+;;; the background process associated with the buffer, if any.
+(spaceline-toggle-process-off)
+;;; IRC channels with new messages, integrates with erc.
+(spaceline-toggle-erc-track-off)
+;;; version control information.
+(spaceline-toggle-version-control-on)
+;;; integrates with org-pomodoro.
+(spaceline-toggle-org-pomodoro-off)
+;;; the current org clock, integrates with org.
+(spaceline-toggle-org-clock-off)
+;;; integrates with nyan-mode.
+(spaceline-toggle-nyan-cat-on)
+;;; integrates with fancy-battery-mode.
+(spaceline-toggle-battery-off)
+;;; information about the currently active selection, if any.
+(spaceline-toggle-selection-info-off)
+;;; the line ending convention used in the current buffer (unix, dos or mac).
+(spaceline-toggle-buffer-encoding-abbrev-off)
+;;; the value of point, this is disabled by default.
+(spaceline-toggle-point-position-off)
+;;; current line and column.
+(spaceline-toggle-line-column-on)
+;;; meta-segment used by third-party packages.
+(spaceline-toggle-global-on)
+;;; shows the current position in the buffer as a percentage.
+(spaceline-toggle-buffer-position-off)
+;;; shows the currently visible part of the buffer.
+(spaceline-toggle-hud-off)
 
 
 (require'guide-key)
@@ -176,6 +235,20 @@ Source is over at: http://yogthos.net/posts/2015-06-16-Figwheel-nREPL.html"
   (insert "(use 'figwheel-sidecar.repl-api)
 (cljs-repl)
 "))
+
+(defun diminish-custom ()
+  "Diminish the modes that are always on."
+  (interactive)
+  (diminish 'guru-mode)
+  (diminish 'guide-key-mode)
+  (diminish 'flycheck-mode)
+  (diminish 'helm-mode)
+  (diminish 'whitespace-mode)
+  (diminish 'projectile-mode)
+  (diminish 'prelude-mode))
+
+;;;; diminish modes that are always on.
+(run-at-time "3 sec" nil 'diminish-custom)
 
 (provide 'personal)
 ;;; personal.el ends here
