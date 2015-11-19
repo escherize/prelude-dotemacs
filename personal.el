@@ -95,18 +95,27 @@
 (add-to-list 'prelude-packages 'guide-key)
 (add-to-list 'prelude-packages 'neotree)
 (add-to-list 'prelude-packages 'align-cljlet)
-(add-to-list 'prelude-packages 'moe-theme)
+;;(add-to-list 'prelude-packages 'moe-theme)
+(add-to-list 'prelude-packages 'spacemacs-theme)
 (add-to-list 'prelude-packages 'spaceline)
 (add-to-list 'prelude-packages 'highlight-symbol)
 (add-to-list 'prelude-packages 'edit-server)
 ;;(add-to-list 'prelude-packages 'nyan-mode)
 (add-to-list 'prelude-packages 'eyebrowse)
+(add-to-list 'prelude-packages 'fill-column-indicator)
+(add-to-list 'prelude-packages 'beacon)
 
 (prelude-install-packages)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  END use prelude to auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(beacon-mode)
+
+(require 'fill-column-indicator)
+(setq fci-rule-column 80)
+(turn-on-fci-mode)
 
 (require 'eyebrowse)
 (eyebrowse-mode t)
@@ -133,7 +142,7 @@
 ;;; the size of the buffer.
 (spaceline-toggle-buffer-size-off)
 ;;; the name of the buffer.
-(spaceline-toggle-buffer-id-off)
+(spaceline-toggle-buffer-id-on)
 ;;; the host for remote buffers.
 (spaceline-toggle-remote-host-off)
 ;;; the current major mode.
@@ -157,7 +166,10 @@
 ;;; the current org clock, integrates with org.
 (spaceline-toggle-org-clock-off)
 ;;; integrates with nyan-mode.
-(spaceline-toggle-nyan-cat-on)
+(spaceline-toggle-nyan-cat-off)
+;;; shows the currently visible part of the buffer.
+;; Usually either this or nyancat.
+(spaceline-toggle-hud-on)
 ;;; integrates with fancy-battery-mode.
 (spaceline-toggle-battery-off)
 ;;; information about the currently active selection, if any.
@@ -172,8 +184,6 @@
 (spaceline-toggle-global-on)
 ;;; shows the current position in the buffer as a percentage.
 (spaceline-toggle-buffer-position-off)
-;;; shows the currently visible part of the buffer.
-(spaceline-toggle-hud-off)
 
 
 (require'guide-key)
@@ -201,7 +211,9 @@
 (add-hook 'clojure-mode-hook (lambda ()
                                (clj-refactor-mode 1)
                                (cljr-add-keybindings-with-prefix "C-c C-m")
-                               (local-set-key (kbd ";") 'sp-comment)))
+                               (local-set-key (kbd ";") 'sp-comment)
+                               (define-key clojure-mode-map (kbd "C-c C-w") nil)
+                               ))
 
 (global-set-key (kbd "C-c h s") 'helm-do-ag)
 
@@ -225,8 +237,6 @@
 
 (global-set-key (kbd "C-c j") 'avy-goto-subword-1)
 ;;(global-set-key (kbd "s-w") 'ace-window)
-
-(persp-mode 1)
 
 (defun figwheel-repl ()
   "Use call this when connecting to a figwheel repl.
