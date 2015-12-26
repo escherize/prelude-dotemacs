@@ -24,6 +24,7 @@
    (quote
     (powerline zop-to-char zenburn-theme wsd-mode web-mode volatile-highlights vkill undo-tree smex smartrep smartparens scss-mode rainbow-mode rainbow-delimiters pixie-mode ov operate-on-number ocodo-svg-modelines nim-mode nginx-mode neotree mustache-mode move-text monokai-theme moe-theme markdown-mode magit less-css-mode json-mode js2-mode howdoi helm-projectile-all helm-projectile helm-google helm-descbinds helm-ag guru-mode guide-key grizzl god-mode gitignore-mode github-browse-file gitconfig-mode git-timemachine gist geiser flycheck flx-ido expand-region exec-path-from-shell emmet-mode elisp-slime-nav easy-kill django-mode discover-my-major diminish diff-hl darkroom darkburn-theme cyberpunk-theme csv-mode company-anaconda color-theme-solarized color-theme-sanityinc-tomorrow clojure-snippets clojure-quick-repls clojure-mode-extra-font-locking clojure-cheatsheet cljsbuild-mode cljr-helm cider-eval-sexp-fu browse-kill-ring anzu align-cljlet ace-window ace-jump-buffer ac-cider 4clojure 2048-game)))
  '(powerline-default-separator (quote arrow))
+ '(undo-tree-visualizer-timestamps t)
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
    (quote

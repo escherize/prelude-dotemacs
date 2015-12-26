@@ -88,7 +88,9 @@
 ;;  use prelude to auto-install whatever the fuck packages I want.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(add-to-list 'prelude-packages 'clj-refactor)
+
+;; handle this by-hand
+;;(add-to-list 'prelude-packages 'clj-refactor)
 (add-to-list 'prelude-packages 'emmet-mode)
 (add-to-list 'prelude-packages 'wsd-mode)
 (add-to-list 'prelude-packages 'github-browse-file)
@@ -104,6 +106,7 @@
 (add-to-list 'prelude-packages 'eyebrowse)
 (add-to-list 'prelude-packages 'fill-column-indicator)
 (add-to-list 'prelude-packages 'beacon)
+(add-to-list 'prelude-packages 'highlight-tail)
 
 (prelude-install-packages)
 
@@ -111,7 +114,38 @@
 ;;  END use prelude to auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Highlight Tail mode - Kewl~
+(setq highlight-tail-colors '(("black" . 0)
+                              ("#bc2525" . 25)
+                              ("black" . 66)))
+(setq highlight-tail-steps 10 highlight-tail-timer 1)
+(setq highlight-tail-posterior-type 'const)
+;; (highlight-tail-reload)
+(highlight-tail-mode)
+
+;;; Apples and stuff
+
+;; Then there's this which is
+;; boot stuff
+(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
+(add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
+
+(require 'clj-refactor)
+
+(smartparens-global-strict-mode t)
+
+(defun my-clojure-mode-hook ()
+  (clj-refactor-mode 1)
+  (yas-minor-mode 1) ; for adding require/use/import
+  (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+(add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
+
 (beacon-mode)
+
+(custom-set-variables
+ '(undo-tree-visualizer-show-diff t)
+ '(undo-tree-visualizer-timestamps t))
 
 (require 'fill-column-indicator)
 (setq fci-rule-column 80)
@@ -209,11 +243,27 @@
 
 (require 'clj-refactor)
 (add-hook 'clojure-mode-hook (lambda ()
+                               (define-key clojure-mode-map (kbd "C-c C-w") nil)
                                (clj-refactor-mode 1)
                                (cljr-add-keybindings-with-prefix "C-c C-m")
-                               (local-set-key (kbd ";") 'sp-comment)
-                               (define-key clojure-mode-map (kbd "C-c C-w") nil)
-                               ))
+                               (local-set-key (kbd ";") 'sp-comment)))
+
+(add-hook 'cider-mode-map
+          (lambda ()
+            (define-key cider-mode-map (kbd "C-c C-w") nil)))
+
+(defun save-macro (name)
+  "save a macro. Take a name as argument
+   and save the last defined macro under
+   this name at the end of your .emacs"
+  (interactive "SName of the macro: ")
+  (kmacro-name-last-macro name)
+  (find-file "~/.emacs.d/core.el") ;; user-init-file
+  (goto-char (point-max))
+  (newline)
+  (insert-kbd-macro name)
+  (newline)
+  (switch-to-buffer nil))
 
 (global-set-key (kbd "C-c h s") 'helm-do-ag)
 
