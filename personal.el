@@ -20,9 +20,9 @@
 (fset 'yes-or-no-p 'y-or-n-p)         ;; enable y/n answers
 (setq initial-scratch-message "")     ;; empty scratch message
 (setq ring-bell-function
-      (lambda () (message "*beep*"))) ;; dont beep outloud, thats rude.
+      (lambda () (message "*beep*"))) ;; dont beep outloud, thats rude!
 (setq auto-window-vscroll nil)        ;; better scrolling
-(global-hl-line-mode 1)               ;; do highlight line at point
+(global-hl-line-mode 0)               ;; do highlight line at point
 (setq prelude-flyspell nil)           ;; no more red boxes
 
 (setq backup-directory-alist
@@ -35,7 +35,55 @@
 (setq windmove-wrap-around nil)
 
 ;; Helm settings:
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+(define-key helm-map (kbd "C-z")  'helm-select-action)
+
+(when (executable-find "curl") (setq helm-net-prefer-curl t))
+
+(define-globalized-minor-mode
+  global-text-scale-mode
+  text-scale-mode
+  (lambda () (text-scale-mode 1)))
+
+(defun global-text-scale-adjust (inc)
+  (interactive)
+  (text-scale-set 1)
+  (kill-local-variable 'text-scale-mode-amount)
+  (setq-default text-scale-mode-amount (+ text-scale-mode-amount inc))
+  (global-text-scale-mode 1))
+
+(defun big-mode ()
+  (interactive)
+  (text-scale-set 1)
+  (global-text-scale-adjust 1))
+
+(defun lil-mode ()
+  (interactive)
+  (text-scale-set 1)
+  (global-text-scale-adjust -1))
+
+(setq
+ ;; open helm buffer inside current window, not occupy whole other window
+ helm-split-window-in-side-p           t
+
+ ;; move to end or beginning of source when reaching top or bottom of source.
+ helm-move-to-line-cycle-in-source     t
+
+ ;; search for library in `require' and `declare-function' sexp.
+ helm-ff-search-library-in-sexp        t
+
+ ;; scroll 8 lines other window using M-<next>/M-<prior>
+ helm-scroll-amount                    8
+ helm-ff-file-name-history-use-recentf t
+ helm-display-header-line              t
+ helm-split-window-in-side-p           t)
+
+(defun pl/helm-alive-p ()
+  (if (boundp 'helm-alive-p)
+      (symbol-value 'helm-alive-p)))
 (helm-autoresize-mode 1)
+(set-face-attribute 'helm-source-header nil :height 0.1)
 
 ;; on mac, there's always a menu bar drawn, don't have it empty
 (unless (string-match "apple-darwin" system-configuration)
@@ -63,7 +111,14 @@
            (format-time-string "%Y-%m-%d")
            ".org")))
 
-(defun fetchh-notes ()
+(defun notes ()
+  (interactive)
+  (find-file
+   (concat "~/notes/random"
+           (format-time-string "%Y-%m-%d")
+           ".org")))
+
+(defun fetchh-notes  ()
   (interactive)
   (find-file "~/notes/fetchh.org"))
 
@@ -71,7 +126,7 @@
   (interactive)
   (find-file "~/fetchh/fetchh_sync/todo/bryan.md"))
 
-(global-set-key [f9] 'todo)
+(global-set-key [f9] 'notes)
 
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
@@ -97,16 +152,20 @@
 (add-to-list 'prelude-packages 'guide-key)
 (add-to-list 'prelude-packages 'neotree)
 (add-to-list 'prelude-packages 'align-cljlet)
-;;(add-to-list 'prelude-packages 'moe-theme)
 (add-to-list 'prelude-packages 'spacemacs-theme)
+(add-to-list 'prelude-packages 'solarized-theme)
 (add-to-list 'prelude-packages 'spaceline)
 (add-to-list 'prelude-packages 'highlight-symbol)
 (add-to-list 'prelude-packages 'edit-server)
+
 ;;(add-to-list 'prelude-packages 'nyan-mode)
 (add-to-list 'prelude-packages 'eyebrowse)
 (add-to-list 'prelude-packages 'fill-column-indicator)
 (add-to-list 'prelude-packages 'beacon)
 (add-to-list 'prelude-packages 'highlight-tail)
+(add-to-list 'prelude-packages 'ox-reveal)
+;; (add-to-list 'prelude-packages 'moe-theme)
+;; (add-to-list 'prelude-packages 'powerline)
 
 (prelude-install-packages)
 
@@ -114,16 +173,31 @@
 ;;  END use prelude to auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Highlight Tail mode - Kewl~
-(setq highlight-tail-colors '(("black" . 0)
-                              ("#bc2525" . 25)
-                              ("black" . 66)))
-(setq highlight-tail-steps 10 highlight-tail-timer 1)
-(setq highlight-tail-posterior-type 'const)
-;; (highlight-tail-reload)
-(highlight-tail-mode)
-
 ;;; Apples and stuff
+
+
+
+;; (require 'powerline)
+
+;; (require 'moe-theme)
+
+;; ;; Show highlighted buffer-id as decoration. (Default: nil)
+;; (setq moe-theme-highlight-buffer-id t)
+
+;; ;; Resize titles (optional).
+;; (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+;; (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
+;; (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
+
+;; ;; Choose a color for mode-line.(Default: blue)
+;; (moe-theme-set-color 'cyan)
+;; (moe-dark)
+;; (powerline-moe-theme)
+
+(require 'ox-reveal)
+
+(setq org-reveal-root "./reveal.js")
+;;(setq org-reveal-root "file:///Users/bcm/dv/reveal/reveal.js-3.2.0")
 
 ;; Then there's this which is
 ;; boot stuff
@@ -137,6 +211,7 @@
 (defun my-clojure-mode-hook ()
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import
+  ;; this does C-c C-ret, so: ???
   (cljr-add-keybindings-with-prefix "C-c C-m"))
 
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
@@ -158,66 +233,47 @@
 (edit-server-start)
 
 (require 'spaceline-config)
-(spaceline-spacemacs-theme)
 (load-theme 'spacemacs-dark)
+;;(load-theme 'solarized-dark)
+(spaceline-emacs-theme)
+(spaceline-spacemacs-theme)
 
-;;;; spaceline =medium= settings
 
-;;; integrates with eyebrowse.
-(spaceline-toggle-workspace-number-on)
-;;; integrates with window-numbering.
-(spaceline-toggle-window-number-off)
-;;; shows the current evil state, integrates with evil.
-(spaceline-toggle-evil-state-off)
-;;; integrates with anzu.
-(spaceline-toggle-anzu-off)
-;;; the standard marker denoting whether the buffer is modified or not.
-(spaceline-toggle-buffer-modified-on)
-;;; the size of the buffer.
-(spaceline-toggle-buffer-size-off)
-;;; the name of the buffer.
-(spaceline-toggle-buffer-id-on)
-;;; the host for remote buffers.
-(spaceline-toggle-remote-host-off)
-;;; the current major mode.
-(spaceline-toggle-major-mode-on)
-;;; number of flycheck errors, integrates with flyche(spaceline-toggle-ck)
-(spaceline-toggle-flycheck-error-off)
-;;; number of flycheck warnings, integrates with flycheck.
-(spaceline-toggle-flycheck-warning-off)
-;;; number of flycheck notifications, integrates with flycheck.
-(spaceline-toggle-flycheck-info-off)
-;;; the currently enabled minor modes. The output of this segment can be tweaked with diminish.
-(spaceline-toggle-minor-modes-on)
-;;; the background process associated with the buffer, if any.
-(spaceline-toggle-process-off)
-;;; IRC channels with new messages, integrates with erc.
-(spaceline-toggle-erc-track-off)
-;;; version control information.
-(spaceline-toggle-version-control-on)
-;;; integrates with org-pomodoro.
-(spaceline-toggle-org-pomodoro-off)
-;;; the current org clock, integrates with org.
-(spaceline-toggle-org-clock-off)
-;;; integrates with nyan-mode.
-(spaceline-toggle-nyan-cat-off)
-;;; shows the currently visible part of the buffer.
-;; Usually either this or nyancat.
-(spaceline-toggle-hud-on)
-;;; integrates with fancy-battery-mode.
-(spaceline-toggle-battery-off)
-;;; information about the currently active selection, if any.
-(spaceline-toggle-selection-info-off)
-;;; the line ending convention used in the current buffer (unix, dos or mac).
-(spaceline-toggle-buffer-encoding-abbrev-off)
-;;; the value of point, this is disabled by default.
-(spaceline-toggle-point-position-off)
-;;; current line and column.
-(spaceline-toggle-line-column-on)
-;;; meta-segment used by third-party packages.
-(spaceline-toggle-global-on)
-;;; shows the current position in the buffer as a percentage.
-(spaceline-toggle-buffer-position-off)
+(nyan-mode 1)
+;;(nyan-toggle-wavy-trail)
+(nyan-start-animation)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;; spaceline settings ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(spaceline-toggle-workspace-number-on)        ;;; integrates with eyebrowse.
+(spaceline-toggle-window-number-off)          ;;; integrates with window-numbering.
+(spaceline-toggle-evil-state-off)             ;;; shows the current evil state, integrates with evil.
+(spaceline-toggle-anzu-on)                    ;;; integrates with anzu.
+(spaceline-toggle-buffer-modified-on)         ;;; the standard marker denoting whether the buffer is modified or not.
+(spaceline-toggle-buffer-size-off)            ;;; the size of the buffer.
+(spaceline-toggle-buffer-id-on)               ;;; the name of the buffer.
+(spaceline-toggle-remote-host-off)            ;;; the host for remote buffers.
+(spaceline-toggle-major-mode-on)              ;;; the current major mode.
+(spaceline-toggle-flycheck-error-off)         ;;; number of flycheck errors, integrates with flyche(spaceline-toggle-ck)
+(spaceline-toggle-flycheck-warning-off)       ;;; number of flycheck warnings, integrates with flycheck.
+(spaceline-toggle-flycheck-info-off)          ;;; number of flycheck notifications, integrates with flycheck.
+(spaceline-toggle-minor-modes-off)            ;;; The output of this segment can be tweaked with diminish.
+(spaceline-toggle-process-off)                ;;; the background process associated with the buffer, if any.
+(spaceline-toggle-erc-track-off)              ;;; IRC channels with new messages, integrates with erc.
+(spaceline-toggle-version-control-off)        ;;; version control information.
+(spaceline-toggle-org-pomodoro-off)           ;;; integrates with org-pomodoro.
+(spaceline-toggle-org-clock-off)              ;;; the current org clock, integrates with org.
+(spaceline-toggle-nyan-cat-on)               ;;; integrates with nyan-mode.
+(spaceline-toggle-hud-on)                     ;;; shows the currently visible part of the buffer.
+(spaceline-toggle-battery-off)                ;;; show battery thing fancy battery
+(spaceline-toggle-selection-info-off)         ;;; information about the currently active selection, if any.
+(spaceline-toggle-buffer-encoding-abbrev-off) ;;; the line ending convention used in the current buffer (unix, dos or mac).
+(spaceline-toggle-point-position-off)         ;;; the value of point, this is disabled by default.
+(spaceline-toggle-line-column-on)             ;;; current line and column.
+(spaceline-toggle-global-on)                  ;;; meta-segment used by third-party packages.
+(spaceline-toggle-buffer-position-off)        ;;; shows the current position in the buffer as a percentage.
+(spaceline-toggle-buffer-id-on)               ;;; names of buffers
+(spaceline-toggle-which-function-off)         ;;; annoying broken thing.
+
 
 
 (require'guide-key)
@@ -232,9 +288,6 @@
 (add-hook 'web-mode-hook  'emmet-mode)
 (setq emmet-preview-default t)
 
-(setq helm-display-header-line nil) ;; t by default
-(set-face-attribute 'helm-source-header nil :height 0.1)
-(setq helm-split-window-in-side-p 't)
 
 ;; set clj + clj refactor mode on clojure files
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
@@ -250,6 +303,7 @@
 
 (add-hook 'cider-mode-map
           (lambda ()
+            (eldoc-mode 1)
             (define-key cider-mode-map (kbd "C-c C-w") nil)))
 
 (defun save-macro (name)
@@ -283,7 +337,7 @@
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
-(elpy-enable)
+
 
 (global-set-key (kbd "C-c j") 'avy-goto-subword-1)
 ;;(global-set-key (kbd "s-w") 'ace-window)
@@ -299,16 +353,61 @@ Source is over at: http://yogthos.net/posts/2015-06-16-Figwheel-nREPL.html"
 (defun diminish-custom ()
   "Diminish the modes that are always on."
   (interactive)
+  (diminish 'company)
   (diminish 'guru-mode)
   (diminish 'guide-key-mode)
   (diminish 'flycheck-mode)
   (diminish 'helm-mode)
   (diminish 'whitespace-mode)
   (diminish 'projectile-mode)
-  (diminish 'prelude-mode))
-
+  (diminish 'prelude-mode)
+  (diminish 'yas-minor-mode))
 ;;;; diminish modes that are always on.
 (run-at-time "3 sec" nil 'diminish-custom)
+
+(defun transparency (value)
+  "VALUE set the transparency of the frame window!
+0=transparent/100=opaque"
+  (interactive "Transparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
+(set-frame-parameter (selected-frame) 'alpha '(100 100))
+(add-to-list 'default-frame-alist '(alpha 100 100))
+
+(global-set-key (kbd "C-z") nil)     ;; overwrite suspend-frame.
+(global-set-key (kbd "C-x C-z") nil) ;; overwrite suspend-frame.
+
+(setq org-publish-project-alist
+      '(("escherize"
+         :components ("org-escherize" ;;"org-static-escherize"
+                      ))
+
+        ("org-escherize"
+         ;; Path to Jekyll project.
+         :publishing-directory "~/dv/escherize-blog/_posts"
+
+         ;; Path to org files.
+         :base-directory "~/dv/escherize-blog/_org/"
+         :base-extension "org"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4
+         :html-extension "md"
+         :with-section-numbers nil
+         :table-of-contents nil
+         ;; Only export section between <body> </body>
+         :body-only t)
+
+        ;; ("org-static-escherize"
+        ;;  :publishing-directory "~/dv/escherize-blog/"
+        ;;  :base-directory "~/dv/escherize-blog/_drafts/"
+        ;;  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
+        ;;  :recursive t
+        ;;  :publishing-function org-publish-attachment)
+
+        ))
+
+(guide-key-mode 0)
 
 (provide 'personal)
 ;;; personal.el ends here
