@@ -22,7 +22,7 @@
 (setq ring-bell-function
       (lambda () (message "*beep*"))) ;; dont beep outloud, thats rude!
 (setq auto-window-vscroll nil)        ;; better scrolling
-(global-hl-line-mode 0)               ;; do highlight line at point
+(global-hl-line-mode 0)               ;; do not highlight line at point
 (setq prelude-flyspell nil)           ;; no more red boxes
 
 (setq backup-directory-alist
@@ -158,13 +158,12 @@
 (add-to-list 'prelude-packages 'highlight-symbol)
 (add-to-list 'prelude-packages 'edit-server)
 
-;;(add-to-list 'prelude-packages 'nyan-mode)
+(add-to-list 'prelude-packages 'nyan-mode)
 (add-to-list 'prelude-packages 'eyebrowse)
 (add-to-list 'prelude-packages 'fill-column-indicator)
 (add-to-list 'prelude-packages 'beacon)
 (add-to-list 'prelude-packages 'highlight-tail)
 (add-to-list 'prelude-packages 'ox-reveal)
-;; (add-to-list 'prelude-packages 'moe-theme)
 ;; (add-to-list 'prelude-packages 'powerline)
 
 (prelude-install-packages)
@@ -212,7 +211,23 @@
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import
   ;; this does C-c C-ret, so: ???
-  (cljr-add-keybindings-with-prefix "C-c C-m"))
+  (cljr-add-keybindings-with-prefix "C-c C-m")
+  (progn (defun clojure-test-filename ()
+           (concat (projectile-project-root)
+                   "test/clj"
+                   (mapconcat #'identity
+                              (butlast (split-string (cider-current-ns) "\\.")) "/")
+                   "/"
+                   (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))
+                   "_test.clj"))
+
+         (defadvice projectile-toggle-between-implementation-and-test (around create-clojure-test-advice)
+           "Visit new file if can't find test"
+           (condition-case nil
+               ad-do-it
+             (error (find-file (clojure-test-filename)))))
+
+         (ad-activate 'projectile-toggle-between-implementation-and-test)))
 
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
 
@@ -233,6 +248,7 @@
 (edit-server-start)
 
 (require 'spaceline-config)
+;;(load-theme 'dracula)
 (load-theme 'spacemacs-dark)
 ;;(load-theme 'solarized-dark)
 (spaceline-emacs-theme)
@@ -240,7 +256,7 @@
 
 
 (nyan-mode 1)
-;;(nyan-toggle-wavy-trail)
+(nyan-toggle-wavy-trail)
 (nyan-start-animation)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;; spaceline settings ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -342,16 +358,8 @@
 (global-set-key (kbd "C-c j") 'avy-goto-subword-1)
 ;;(global-set-key (kbd "s-w") 'ace-window)
 
-(defun figwheel-repl ()
-  "Use call this when connecting to a figwheel repl.
-Source is over at: http://yogthos.net/posts/2015-06-16-Figwheel-nREPL.html"
-  (interactive)
-  (insert "(use 'figwheel-sidecar.repl-api)
-(cljs-repl)
-"))
-
 (defun diminish-custom ()
-  "Diminish the modes that are always on."
+  "Diminish the modes that are most-always on."
   (interactive)
   (diminish 'company)
   (diminish 'guru-mode)
