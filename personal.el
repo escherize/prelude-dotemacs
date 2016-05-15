@@ -417,5 +417,7 @@
 
 (guide-key-mode 0)
 
+(server-start)
+
 (provide 'personal)
 ;;; personal.el ends here

@@ -22,6 +22,7 @@
  '(erc-user-full-name "bryan maass")
  '(fci-rule-color "#383838")
  '(helm-ag-fuzzy-match t)
+ '(js2-basic-offset 2)
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
