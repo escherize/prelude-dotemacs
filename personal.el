@@ -34,6 +34,12 @@
 (windmove-default-keybindings 'shift)
 (setq windmove-wrap-around nil)
 
+;; reverse regex thing:
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+
 ;; Helm settings:
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
@@ -104,13 +110,6 @@
 
 ;; multiple cursor mode defaults.
 
-(defun stand ()
-  (interactive)
-  (find-file
-   (concat "~/notes/standup"
-           (format-time-string "%Y-%m-%d")
-           ".org")))
-
 (defun notes ()
   (interactive)
   (find-file
@@ -120,7 +119,7 @@
 
 (defun fetchh-notes  ()
   (interactive)
-  (find-file "~/notes/fetchh.org"))
+  (find-file "~/dv/notes/fetchh.org"))
 
 (defun todo ()
   (interactive)
@@ -227,11 +226,21 @@
                ad-do-it
              (error (find-file (clojure-test-filename)))))
 
-         (ad-activate 'projectile-toggle-between-implementation-and-test)))
+         (ad-activate 'projectile-toggle-between-implementation-and-test))
+  (define-clojure-indent
+    (defroutes 'defun)
+    (GET 2)
+    (POST 2)
+    (PUT 2)
+    (DELETE 2)
+    (HEAD 2)
+    (ANY 2)
+    (context 2)
+    (defapi 2)))
 
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
 
-(beacon-mode)
+(beacon-mode 1)
 
 (custom-set-variables
  '(undo-tree-visualizer-show-diff t)
