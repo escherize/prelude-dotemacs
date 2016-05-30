@@ -47,10 +47,16 @@
 
 (when (executable-find "curl") (setq helm-net-prefer-curl t))
 
+
+
 (define-globalized-minor-mode
   global-text-scale-mode
   text-scale-mode
   (lambda () (text-scale-mode 1)))
+
+
+(set-frame-font "-*-Inconsolata-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+;;(set-frame-font "-*-Office Code Pro D-light-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 
 (defun global-text-scale-adjust (inc)
   (interactive)
@@ -59,12 +65,12 @@
   (setq-default text-scale-mode-amount (+ text-scale-mode-amount inc))
   (global-text-scale-mode 1))
 
-(defun big-mode ()
+(defun big-er ()
   (interactive)
   (text-scale-set 1)
   (global-text-scale-adjust 1))
 
-(defun lil-mode ()
+(defun lil-er ()
   (interactive)
   (text-scale-set 1)
   (global-text-scale-adjust -1))
@@ -117,6 +123,10 @@
            (format-time-string "%Y-%m-%d")
            ".org")))
 
+(defun rokt-notes ()
+  (interactive)
+  (find-file "/Users/bcm/rokt/rokt.org"))
+
 (defun fetchh-notes  ()
   (interactive)
   (find-file "~/dv/notes/fetchh.org"))
@@ -156,7 +166,7 @@
 (add-to-list 'prelude-packages 'spaceline)
 (add-to-list 'prelude-packages 'highlight-symbol)
 (add-to-list 'prelude-packages 'edit-server)
-
+(add-to-list 'prelude-packages 'dumb-jump)
 (add-to-list 'prelude-packages 'nyan-mode)
 (add-to-list 'prelude-packages 'eyebrowse)
 (add-to-list 'prelude-packages 'fill-column-indicator)
@@ -173,7 +183,7 @@
 
 ;;; Apples and stuff
 
-
+(dumb-jump-mode)
 
 ;; (require 'powerline)
 
@@ -205,6 +215,8 @@
 (require 'clj-refactor)
 
 (smartparens-global-strict-mode t)
+
+(setq projectile-completion-system 'grizzl)
 
 (defun my-clojure-mode-hook ()
   (clj-refactor-mode 1)
@@ -257,7 +269,6 @@
 (edit-server-start)
 
 (require 'spaceline-config)
-;;(load-theme 'dracula)
 (load-theme 'spacemacs-dark)
 ;;(load-theme 'solarized-dark)
 (spaceline-emacs-theme)
@@ -394,6 +405,8 @@
 (global-set-key (kbd "C-z") nil)     ;; overwrite suspend-frame.
 (global-set-key (kbd "C-x C-z") nil) ;; overwrite suspend-frame.
 
+(global-set-key (kbd "M-q") 'paredit-reindent-defun)
+
 (setq org-publish-project-alist
       '(("escherize"
          :components ("org-escherize" ;;"org-static-escherize"
@@ -427,6 +440,9 @@
 (guide-key-mode 0)
 
 (server-start)
+
+(add-to-list 'projectile-globally-ignored-directories "referral-delivery/resources/META-INF")
+
 
 (provide 'personal)
 ;;; personal.el ends here
