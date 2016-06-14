@@ -44,16 +44,15 @@
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-z")  'helm-select-action)
+(require 'helm-projectile)
+(helm-projectile-on)
 
 (when (executable-find "curl") (setq helm-net-prefer-curl t))
-
-
 
 (define-globalized-minor-mode
   global-text-scale-mode
   text-scale-mode
   (lambda () (text-scale-mode 1)))
-
 
 (set-frame-font "-*-Inconsolata-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
 ;;(set-frame-font "-*-Office Code Pro D-light-normal-normal-*-13-*-*-*-m-0-iso10646-1")
@@ -68,12 +67,12 @@
 (defun big-er ()
   (interactive)
   (text-scale-set 1)
-  (global-text-scale-adjust 1))
+  (global-text-scale-adjust 0.25))
 
 (defun lil-er ()
   (interactive)
   (text-scale-set 1)
-  (global-text-scale-adjust -1))
+  (global-text-scale-adjust -0.25))
 
 (setq
  ;; open helm buffer inside current window, not occupy whole other window
@@ -98,8 +97,7 @@
 (set-face-attribute 'helm-source-header nil :height 0.1)
 
 ;; on mac, there's always a menu bar drawn, don't have it empty
-(unless (string-match "apple-darwin" system-configuration)
-  (menu-bar-mode -1))
+(unless (string-match "apple-darwin" system-configuration) (menu-bar-mode -1))
 
 ;; under mac, have Command as Super and Alt as Meta
 (when (string-match "apple-darwin" system-configuration)
@@ -127,15 +125,7 @@
   (interactive)
   (find-file "/Users/bcm/rokt/rokt.org"))
 
-(defun fetchh-notes  ()
-  (interactive)
-  (find-file "~/dv/notes/fetchh.org"))
-
-(defun todo ()
-  (interactive)
-  (find-file "~/fetchh/fetchh_sync/todo/bryan.md"))
-
-(global-set-key [f9] 'notes)
+(global-set-key [f9] 'rokt-notes)
 
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
@@ -154,11 +144,10 @@
 
 
 ;; handle this by-hand
-;;(add-to-list 'prelude-packages 'clj-refactor)
+(add-to-list 'prelude-packages 'clj-refactor)
 (add-to-list 'prelude-packages 'emmet-mode)
 (add-to-list 'prelude-packages 'wsd-mode)
 (add-to-list 'prelude-packages 'github-browse-file)
-(add-to-list 'prelude-packages 'guide-key)
 (add-to-list 'prelude-packages 'neotree)
 (add-to-list 'prelude-packages 'align-cljlet)
 (add-to-list 'prelude-packages 'spacemacs-theme)
@@ -173,7 +162,7 @@
 (add-to-list 'prelude-packages 'beacon)
 (add-to-list 'prelude-packages 'highlight-tail)
 (add-to-list 'prelude-packages 'ox-reveal)
-;; (add-to-list 'prelude-packages 'powerline)
+;;(add-to-list 'prelude-packages 'powerline)
 
 (prelude-install-packages)
 
@@ -248,7 +237,9 @@
     (HEAD 2)
     (ANY 2)
     (context 2)
-    (defapi 2)))
+    (defapi 2)
+    (register-handler 1)
+    (register-sub 1)))
 
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
 
@@ -270,6 +261,8 @@
 
 (require 'spaceline-config)
 (load-theme 'spacemacs-dark)
+(setq prelude-theme 'spacemacs-dark)
+
 ;;(load-theme 'solarized-dark)
 (spaceline-emacs-theme)
 (spaceline-spacemacs-theme)
@@ -311,13 +304,6 @@
 (spaceline-toggle-which-function-off)         ;;; annoying broken thing.
 
 
-
-(require'guide-key)
-(setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c" "C-h" "C-x x"))
-(setq guide-key/recursive-key-sequence-flag t)
-(setq guide-key/idle-delay 1.0)
-(guide-key-mode 1)  ; Enable guide-key-mode
-
 ;; Auto-start emmet on 'any markup' modes
 (add-hook 'sgml-mode-hook 'emmet-mode)
 (add-hook 'css-mode-hook  'emmet-mode)
@@ -325,22 +311,27 @@
 (setq emmet-preview-default t)
 
 
-;; set clj + clj refactor mode on clojure files
-(add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
-(add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-mode))
-(add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
+;; cider does this now:
+;; ;; set clj + clj refactor mode on clojure files
+;; (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
+;; (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
+;; (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
 
 (require 'clj-refactor)
-(add-hook 'clojure-mode-hook (lambda ()
-                               (define-key clojure-mode-map (kbd "C-c C-w") nil)
-                               (clj-refactor-mode 1)
-                               (cljr-add-keybindings-with-prefix "C-c C-m")
-                               (local-set-key (kbd ";") 'sp-comment)))
+(add-hook 'clojure-mode-hook
+          (lambda ()
+            (define-key clojure-mode-map (kbd "C-c C-w") nil)
+            (define-key clojure-mode-map (kbd "C-c C-w") nil)
+            (clj-refactor-mode 1)
+            (cljr-add-keybindings-with-prefix "C-c C-m")
+            (local-set-key (kbd ";") 'sp-comment)))
 
 (add-hook 'cider-mode-map
           (lambda ()
             (eldoc-mode 1)
             (define-key cider-mode-map (kbd "C-c C-w") nil)))
+
+(eldoc-mode 1)
 
 (defun save-macro (name)
   "save a macro. Take a name as argument
@@ -383,7 +374,6 @@
   (interactive)
   (diminish 'company)
   (diminish 'guru-mode)
-  (diminish 'guide-key-mode)
   (diminish 'flycheck-mode)
   (diminish 'helm-mode)
   (diminish 'whitespace-mode)
@@ -437,12 +427,18 @@
 
         ))
 
-(guide-key-mode 0)
-
 (server-start)
 
 (add-to-list 'projectile-globally-ignored-directories "referral-delivery/resources/META-INF")
 
+(setq cider-cljs-lein-repl
+      "(do (require 'figwheel-sidecar.repl-api)
+           (figwheel-sidecar.repl-api/start-figwheel!)
+           (figwheel-sidecar.repl-api/cljs-repl))")
+
+(setq org-src-fontify-natively t)
+
+(require 'ox-confluence)
 
 (provide 'personal)
 ;;; personal.el ends here
