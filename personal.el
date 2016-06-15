@@ -44,8 +44,9 @@
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-z")  'helm-select-action)
-(require 'helm-projectile)
-(helm-projectile-on)
+
+
+
 
 (when (executable-find "curl") (setq helm-net-prefer-curl t))
 
@@ -135,9 +136,7 @@
 ;;;;;;;;;; Needed installation.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; use prelude to auto-install whatever the fuck packages I want.
 
-(smartparens-global-mode 1)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  use prelude to auto-install whatever the fuck packages I want.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -160,9 +159,11 @@
 (add-to-list 'prelude-packages 'eyebrowse)
 (add-to-list 'prelude-packages 'fill-column-indicator)
 (add-to-list 'prelude-packages 'beacon)
-(add-to-list 'prelude-packages 'highlight-tail)
+(add-to-list 'prelude-packages 'ag)
 (add-to-list 'prelude-packages 'ox-reveal)
-;;(add-to-list 'prelude-packages 'powerline)
+(add-to-list 'prelude-packages 'helm)
+(add-to-list 'prelude-packages 'projectile)
+(add-to-list 'prelude-packages 'helm-projectile)
 
 (prelude-install-packages)
 
@@ -170,42 +171,21 @@
 ;;  END use prelude to auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Apples and stuff
-
-(dumb-jump-mode)
-
-;; (require 'powerline)
-
-;; (require 'moe-theme)
-
-;; ;; Show highlighted buffer-id as decoration. (Default: nil)
-;; (setq moe-theme-highlight-buffer-id t)
-
-;; ;; Resize titles (optional).
-;; (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
-;; (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
-;; (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
-
-;; ;; Choose a color for mode-line.(Default: blue)
-;; (moe-theme-set-color 'cyan)
-;; (moe-dark)
-;; (powerline-moe-theme)
+(projectile-global-mode)
+(helm-projectile-on)
 
 (require 'ox-reveal)
-
 (setq org-reveal-root "./reveal.js")
 ;;(setq org-reveal-root "file:///Users/bcm/dv/reveal/reveal.js-3.2.0")
 
 ;; Then there's this which is
 ;; boot stuff
-(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
-(add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
-
-(require 'clj-refactor)
+;;(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
+;;(add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
 
 (smartparens-global-strict-mode t)
 
-(setq projectile-completion-system 'grizzl)
+;;(setq projectile-completion-system 'grizzl)
 
 (defun my-clojure-mode-hook ()
   (clj-refactor-mode 1)
@@ -220,7 +200,6 @@
                    "/"
                    (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))
                    "_test.clj"))
-
          (defadvice projectile-toggle-between-implementation-and-test (around create-clojure-test-advice)
            "Visit new file if can't find test"
            (condition-case nil
@@ -261,12 +240,10 @@
 
 (require 'spaceline-config)
 (load-theme 'spacemacs-dark)
-(setq prelude-theme 'spacemacs-dark)
 
 ;;(load-theme 'solarized-dark)
 (spaceline-emacs-theme)
 (spaceline-spacemacs-theme)
-
 
 (nyan-mode 1)
 (nyan-toggle-wavy-trail)
@@ -311,27 +288,18 @@
 (setq emmet-preview-default t)
 
 
-;; cider does this now:
-;; ;; set clj + clj refactor mode on clojure files
-;; (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
-;; (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
-;; (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
-
 (require 'clj-refactor)
 (add-hook 'clojure-mode-hook
           (lambda ()
-            (define-key clojure-mode-map (kbd "C-c C-w") nil)
+            (eldoc-mode 1)
             (define-key clojure-mode-map (kbd "C-c C-w") nil)
             (clj-refactor-mode 1)
             (cljr-add-keybindings-with-prefix "C-c C-m")
             (local-set-key (kbd ";") 'sp-comment)))
-
 (add-hook 'cider-mode-map
           (lambda ()
             (eldoc-mode 1)
             (define-key cider-mode-map (kbd "C-c C-w") nil)))
-
-(eldoc-mode 1)
 
 (defun save-macro (name)
   "save a macro. Take a name as argument
@@ -347,9 +315,7 @@
   (switch-to-buffer nil))
 
 (global-set-key (kbd "C-c h s") 'helm-do-ag)
-
 (global-set-key (kbd "<C-return>") 'highlight-symbol)
-
 (setq magit-last-seen-setup-instructions "1.4.0")
 
 (defun my-python-config ()
@@ -358,54 +324,48 @@
   (local-set-key (kbd "M ,") 'jedi:goto-definition-pop-marker))
 (add-hook 'python-mode-hook 'my-python-config)
 
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
+;;(add-hook 'python-mode-hook 'jedi:setup)
+;;(setq jedi:complete-on-dot t)
 
-(add-to-list 'package-archives
-             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives'("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 
+(global-set-key (kbd "C-c j") 'avy-goto-char-2)
 
-(global-set-key (kbd "C-c j") 'avy-goto-subword-1)
-;;(global-set-key (kbd "s-w") 'ace-window)
+;;;;(defun diminish-custom ()
+;;;;  "Diminish the modes that are most-always on."
+;;;;  (interactive)
+;;;;  (diminish 'company)
+;;;;  (diminish 'guru-mode)
+;;;;  (diminish 'flycheck-mode)
+;;;;  (diminish 'helm-mode)
+;;;;  (diminish 'whitespace-mode)
+;;;;  (diminish 'projectile-mode)
+;;;;  (diminish 'prelude-mode)
+;;;;  (diminish 'yas-minor-mode))
+;;;;;;;; diminish modes that are always on.
+;;;;(run-at-time "3 sec" nil 'diminish-custom)
 
-(defun diminish-custom ()
-  "Diminish the modes that are most-always on."
-  (interactive)
-  (diminish 'company)
-  (diminish 'guru-mode)
-  (diminish 'flycheck-mode)
-  (diminish 'helm-mode)
-  (diminish 'whitespace-mode)
-  (diminish 'projectile-mode)
-  (diminish 'prelude-mode)
-  (diminish 'yas-minor-mode))
-;;;; diminish modes that are always on.
-(run-at-time "3 sec" nil 'diminish-custom)
-
-(defun transparency (value)
-  "VALUE set the transparency of the frame window!
-0=transparent/100=opaque"
-  (interactive "Transparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
-
-(set-frame-parameter (selected-frame) 'alpha '(100 100))
-(add-to-list 'default-frame-alist '(alpha 100 100))
+;;;(defun transparency (value)
+;;;  "VALUE set the transparency of the frame window!
+;;;0=transparent/100=opaque"
+;;;  (interactive "Transparency Value 0 - 100 opaque:")
+;;;  (set-frame-parameter (selected-frame) 'alpha value))
+;;;
+;;;(set-frame-parameter (selected-frame) 'alpha '(100 100))
+;;;(add-to-list 'default-frame-alist '(alpha 100 100))
 
 (global-set-key (kbd "C-z") nil)     ;; overwrite suspend-frame.
 (global-set-key (kbd "C-x C-z") nil) ;; overwrite suspend-frame.
-
 (global-set-key (kbd "M-q") 'paredit-reindent-defun)
 
 (setq org-publish-project-alist
       '(("escherize"
-         :components ("org-escherize" ;;"org-static-escherize"
-                      ))
-
+         ;;"org-static-escherize"
+         :components ("org-escherize"))
         ("org-escherize"
          ;; Path to Jekyll project.
          :publishing-directory "~/dv/escherize-blog/_posts"
-
          ;; Path to org files.
          :base-directory "~/dv/escherize-blog/_org/"
          :base-extension "org"
@@ -416,18 +376,7 @@
          :with-section-numbers nil
          :table-of-contents nil
          ;; Only export section between <body> </body>
-         :body-only t)
-
-        ;; ("org-static-escherize"
-        ;;  :publishing-directory "~/dv/escherize-blog/"
-        ;;  :base-directory "~/dv/escherize-blog/_drafts/"
-        ;;  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
-        ;;  :recursive t
-        ;;  :publishing-function org-publish-attachment)
-
-        ))
-
-(server-start)
+         :body-only t)))
 
 (add-to-list 'projectile-globally-ignored-directories "referral-delivery/resources/META-INF")
 
@@ -436,9 +385,14 @@
            (figwheel-sidecar.repl-api/start-figwheel!)
            (figwheel-sidecar.repl-api/cljs-repl))")
 
+(defun init-figwheel-repl ()
+  (interactive)
+  (insert cider-cljs-lein-repl))
+
 (setq org-src-fontify-natively t)
 
-(require 'ox-confluence)
+(server-start)
+
 
 (provide 'personal)
 ;;; personal.el ends here
