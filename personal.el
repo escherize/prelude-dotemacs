@@ -24,7 +24,8 @@
 (setq auto-window-vscroll nil)        ;; better scrolling
 (global-hl-line-mode 0)               ;; do not highlight line at point
 (setq prelude-flyspell nil)           ;; no more red boxes
-
+(setq global-whitespace-mode -1)
+(setq whitespace-mode -1)
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
@@ -45,7 +46,7 @@
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-z")  'helm-select-action)
 
-
+(global-diff-hl-mode 0)
 
 
 (when (executable-find "curl") (setq helm-net-prefer-curl t))
@@ -55,8 +56,11 @@
   text-scale-mode
   (lambda () (text-scale-mode 1)))
 
-(set-frame-font "-*-Inconsolata-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
-;;(set-frame-font "-*-Office Code Pro D-light-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+
+;; source code pro
+(set-frame-font "-*-PT Mono-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1")
+;; (set-frame-font "-*-Inconsolata-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+;; (set-frame-font "-*-Office Code Pro D-light-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 
 (defun global-text-scale-adjust (inc)
   (interactive)
@@ -164,8 +168,13 @@
 (add-to-list 'prelude-packages 'helm)
 (add-to-list 'prelude-packages 'projectile)
 (add-to-list 'prelude-packages 'helm-projectile)
+(add-to-list 'prelude-packages 'git-gutter+)
+(add-to-list 'prelude-packages 'helm-hunks)
 
 (prelude-install-packages)
+
+(global-git-gutter+-mode 1)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  END use prelude to auto-install
@@ -189,6 +198,7 @@
 
 (defun my-clojure-mode-hook ()
   (clj-refactor-mode 1)
+  (whitespace-mode -1)
   (yas-minor-mode 1) ; for adding require/use/import
   ;; this does C-c C-ret, so: ???
   (cljr-add-keybindings-with-prefix "C-c C-m")
@@ -218,7 +228,9 @@
     (context 2)
     (defapi 2)
     (register-handler 1)
-    (register-sub 1)))
+    (register-sub 1)
+    (reg-sub 'defun)
+    (trace-forms 0)))
 
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
 
@@ -239,10 +251,10 @@
 (edit-server-start)
 
 (require 'spaceline-config)
-(load-theme 'spacemacs-dark)
-
+;;(load-theme 'spacemacs-dark)
 ;;(load-theme 'solarized-dark)
-(spaceline-emacs-theme)
+(load-theme 'sanityinc-tomorrow-eighties)
+;;(spaceline-emacs-theme)
 (spaceline-spacemacs-theme)
 
 (nyan-mode 1)
@@ -268,15 +280,15 @@
 (spaceline-toggle-version-control-off)        ;;; version control information.
 (spaceline-toggle-org-pomodoro-off)           ;;; integrates with org-pomodoro.
 (spaceline-toggle-org-clock-off)              ;;; the current org clock, integrates with org.
-(spaceline-toggle-nyan-cat-on)               ;;; integrates with nyan-mode.
-(spaceline-toggle-hud-on)                     ;;; shows the currently visible part of the buffer.
+(spaceline-toggle-nyan-cat-on)                ;;; integrates with nyan-mode.
+(spaceline-toggle-hud-off)                    ;;; shows the currently visible part of the buffer.
 (spaceline-toggle-battery-off)                ;;; show battery thing fancy battery
 (spaceline-toggle-selection-info-off)         ;;; information about the currently active selection, if any.
 (spaceline-toggle-buffer-encoding-abbrev-off) ;;; the line ending convention used in the current buffer (unix, dos or mac).
 (spaceline-toggle-point-position-off)         ;;; the value of point, this is disabled by default.
-(spaceline-toggle-line-column-on)             ;;; current line and column.
+(spaceline-toggle-line-column-off)            ;;; current line and column.
 (spaceline-toggle-global-on)                  ;;; meta-segment used by third-party packages.
-(spaceline-toggle-buffer-position-off)        ;;; shows the current position in the buffer as a percentage.
+(spaceline-toggle-buffer-position-on)         ;;; shows the current position in the buffer as a percentage.
 (spaceline-toggle-buffer-id-on)               ;;; names of buffers
 (spaceline-toggle-which-function-off)         ;;; annoying broken thing.
 
@@ -286,7 +298,6 @@
 (add-hook 'css-mode-hook  'emmet-mode)
 (add-hook 'web-mode-hook  'emmet-mode)
 (setq emmet-preview-default t)
-
 
 (require 'clj-refactor)
 (add-hook 'clojure-mode-hook
@@ -300,6 +311,8 @@
           (lambda ()
             (eldoc-mode 1)
             (define-key cider-mode-map (kbd "C-c C-w") nil)))
+
+
 
 (defun save-macro (name)
   "save a macro. Take a name as argument
@@ -330,7 +343,7 @@
 (add-to-list 'package-archives'("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 
-(global-set-key (kbd "C-c j") 'avy-goto-char-2)
+(global-set-key (kbd "C-c j") 'avy-goto-char)
 
 ;;;;(defun diminish-custom ()
 ;;;;  "Diminish the modes that are most-always on."
@@ -380,12 +393,13 @@
 
 (add-to-list 'projectile-globally-ignored-directories "referral-delivery/resources/META-INF")
 
-(setq cider-cljs-lein-repl
+(setq cider-cljs-lein-repl-running
       "(do (require 'figwheel-sidecar.repl-api)
-           (figwheel-sidecar.repl-api/start-figwheel!)
            (figwheel-sidecar.repl-api/cljs-repl))")
 
-(defun init-figwheel-repl ()
+(setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
+
+(defun init-figwheel-running-repl ()
   (interactive)
   (insert cider-cljs-lein-repl))
 
@@ -393,6 +407,11 @@
 
 (server-start)
 
+(setq inf-clojure-program "planck")
+
+(sp-local-pair 'clojure-mode "#{" "}")
+(sp-local-pair 'clojure-mode "#(" ")")
+(sp-local-pair 'clojure-mode "#?(" ")")
 
 (provide 'personal)
 ;;; personal.el ends here
