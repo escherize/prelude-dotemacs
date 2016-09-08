@@ -3,6 +3,37 @@
 ;;; Commentary:
 
 ;;; Code:
+;; theme first
+;;(require 'moe-theme)
+;;(moe-dark)
+
+;; (add-to-list 'load-path "~/.emacs.d/themes/doom-theme")
+;; (require 'doom-theme)
+;; (load-theme 'doom-one t)
+
+(load-theme 'spacemacs-dark t)
+
+
+;; (ivy-mode 1)
+;; (setq ivy-use-virtual-buffers t)
+;; (global-set-key "\C-s" 'swiper)
+;; (global-set-key (kbd "C-c C-r") 'ivy-resume)
+;; (global-set-key (kbd "<f6>") 'ivy-resume)
+;; (global-set-key (kbd "M-x") 'counsel-M-x)
+;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+;; (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+;; (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+;; (global-set-key (kbd "<f1> l") 'counsel-load-library)
+;; (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+;; (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+;; (global-set-key (kbd "C-c g") 'counsel-git)
+;; (global-set-key (kbd "C-c j") 'counsel-git-grep)
+;; (global-set-key (kbd "C-c k") 'counsel-ag)
+;; (global-set-key (kbd "C-x l") 'counsel-locate)
+;; (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+;; (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+
+
 ;; These are some personal settings that I find
 ;; _Extremely_ nessicary, and some personal functions.
 
@@ -36,7 +67,7 @@
 (setq windmove-wrap-around nil)
 
 ;; reverse regex thing:
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward)
 (global-set-key (kbd "C-M-r") 'isearch-backward)
@@ -48,7 +79,6 @@
 
 (global-diff-hl-mode 0)
 
-
 (when (executable-find "curl") (setq helm-net-prefer-curl t))
 
 (define-globalized-minor-mode
@@ -58,7 +88,7 @@
 
 
 ;; source code pro
-(set-frame-font "-*-PT Mono-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1")
+(set-frame-font "-*-PT Mono-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 ;; (set-frame-font "-*-Inconsolata-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
 ;; (set-frame-font "-*-Office Code Pro D-light-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 
@@ -170,15 +200,20 @@
 (add-to-list 'prelude-packages 'helm-projectile)
 (add-to-list 'prelude-packages 'git-gutter+)
 (add-to-list 'prelude-packages 'helm-hunks)
+(add-to-list 'prelude-packages 'swiper)
+(add-to-list 'prelude-packages 'moe-theme)
 
 (prelude-install-packages)
 
-(global-git-gutter+-mode 1)
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  END use prelude to auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(global-git-gutter+-mode 1)
 
 (projectile-global-mode)
 (helm-projectile-on)
@@ -195,6 +230,9 @@
 (smartparens-global-strict-mode t)
 
 ;;(setq projectile-completion-system 'grizzl)
+
+(setq package-pinned-packages
+      '((cider . "melpa-stable")))
 
 (defun my-clojure-mode-hook ()
   (clj-refactor-mode 1)
@@ -230,7 +268,12 @@
     (register-handler 1)
     (register-sub 1)
     (reg-sub 'defun)
-    (trace-forms 0)))
+    (trace-forms 0)
+    (reg-event-db ':defun)
+    (reg-event-fx ':defun)
+    (reg-sub ':defun)))
+
+;;(put-clojure-indent :require 0)
 
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
 
@@ -251,15 +294,12 @@
 (edit-server-start)
 
 (require 'spaceline-config)
-;;(load-theme 'spacemacs-dark)
-;;(load-theme 'solarized-dark)
-(load-theme 'sanityinc-tomorrow-eighties)
-;;(spaceline-emacs-theme)
 (spaceline-spacemacs-theme)
+(set-face-attribute 'powerline-active2 nil :background "#b0d8fd")
 
-(nyan-mode 1)
-(nyan-toggle-wavy-trail)
-(nyan-start-animation)
+;;(nyan-mode 0)
+;;(nyan-toggle-wavy-trail)
+;;(nyan-start-animation)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;; spaceline settings ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (spaceline-toggle-workspace-number-on)        ;;; integrates with eyebrowse.
@@ -280,13 +320,13 @@
 (spaceline-toggle-version-control-off)        ;;; version control information.
 (spaceline-toggle-org-pomodoro-off)           ;;; integrates with org-pomodoro.
 (spaceline-toggle-org-clock-off)              ;;; the current org clock, integrates with org.
-(spaceline-toggle-nyan-cat-on)                ;;; integrates with nyan-mode.
+(spaceline-toggle-nyan-cat-off)               ;;; integrates with nyan-mode.
 (spaceline-toggle-hud-off)                    ;;; shows the currently visible part of the buffer.
 (spaceline-toggle-battery-off)                ;;; show battery thing fancy battery
 (spaceline-toggle-selection-info-off)         ;;; information about the currently active selection, if any.
 (spaceline-toggle-buffer-encoding-abbrev-off) ;;; the line ending convention used in the current buffer (unix, dos or mac).
 (spaceline-toggle-point-position-off)         ;;; the value of point, this is disabled by default.
-(spaceline-toggle-line-column-off)            ;;; current line and column.
+(spaceline-toggle-line-column-on)             ;;; current line and column.
 (spaceline-toggle-global-on)                  ;;; meta-segment used by third-party packages.
 (spaceline-toggle-buffer-position-on)         ;;; shows the current position in the buffer as a percentage.
 (spaceline-toggle-buffer-id-on)               ;;; names of buffers
@@ -397,7 +437,11 @@
       "(do (require 'figwheel-sidecar.repl-api)
            (figwheel-sidecar.repl-api/cljs-repl))")
 
-(setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
+(setq cider-cljs-lein-repl
+      "(do
+(use 'figwheel-sidecar.repl-api)
+;; (start-figwheel!) ;;<- uncomment if not running
+(cljs-repl))")
 
 (defun init-figwheel-running-repl ()
   (interactive)
@@ -407,11 +451,89 @@
 
 (server-start)
 
-(setq inf-clojure-program "planck")
-
 (sp-local-pair 'clojure-mode "#{" "}")
 (sp-local-pair 'clojure-mode "#(" ")")
 (sp-local-pair 'clojure-mode "#?(" ")")
+(sp-local-pair 'clojure-mode "#\"" "\"")
+
+(smartparens-global-mode 1)
+
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))
+    (message "ERROR: toggle-window-split requires two (2) buffers.")))
+
+(global-set-key (kbd "C-x |") 'toggle-window-split)
+
+(defun my-increment-number-decimal (&optional arg)
+  "Increment the number forward from point by 'arg'."
+  (interactive "p*")
+  (save-excursion
+    (save-match-data
+      (let (inc-by field-width answer)
+        (setq inc-by (if arg arg 1))
+        (skip-chars-backward "0123456789")
+        (when (re-search-forward "[0-9]+" nil t)
+          (setq field-width (- (match-end 0) (match-beginning 0)))
+          (setq answer (+ (string-to-number (match-string 0) 10) inc-by))
+          (when (< answer 0)
+            (setq answer (+ (expt 10 field-width) answer)))
+          (replace-match (format (concat "%0" (int-to-string field-width) "d")
+                                 answer)))))))
+
+(global-set-key (kbd "C-c +") 'my-increment-number-decimal)
+
+(defun my-decrement-number-decimal (&optional arg)
+  (interactive "p*")
+  (my-increment-number-decimal (if arg (- arg) -1)))
+
+(global-set-key (kbd "C-c -") 'my-decrement-number-decimal)
+
+(defun lighten-color-at-point (&optional pct)
+  (interactive "p")
+  (unless (looking-at-p "#")
+    (re-search-backward "#"))
+  (save-excursion
+    (push-mark nil t t)
+    (let ((dist (skip-chars-forward "#A-Za-z0-9" (+ (point) 7)))
+          (percent (or pct 5)))
+      (insert (apply 'color-rgb-to-hex
+                     (apply 'color-hsl-to-rgb
+                            (apply 'color-lighten-hsl
+                                   (append (apply 'color-rgb-to-hsl
+                                                  (color-name-to-rgb (buffer-substring-no-properties (mark) (point))))
+                                           (list percent))))))
+      (delete-region (region-beginning) (+ (region-beginning) dist)))))
+
+(defun darken-color-at-point (&optional pct)
+  (interactive "p")
+  (lighten-color-at-point (if (numberp pct) (* pct -1) -5)))
+
+(defun my-css-mode-hook ()
+  (local-set-key (kbd "C-c l") 'lighten-color-at-point)
+  (local-set-key (kbd "C-c R") 'darken-color-at-point))
+
 
 (provide 'personal)
 ;;; personal.el ends here
