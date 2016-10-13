@@ -5,14 +5,13 @@
 ;;; Code:
 ;; theme first
 ;;(require 'moe-theme)
-;;(moe-dark)
+;;(moe-light)
 
 ;; (add-to-list 'load-path "~/.emacs.d/themes/doom-theme")
 ;; (require 'doom-theme)
-;; (load-theme 'doom-one t)
+;; (load-theme 'doom-dark t)
 
 (load-theme 'spacemacs-dark t)
-
 
 ;; (ivy-mode 1)
 ;; (setq ivy-use-virtual-buffers t)
@@ -86,11 +85,8 @@
   text-scale-mode
   (lambda () (text-scale-mode 1)))
 
-
 ;; source code pro
-(set-frame-font "-*-PT Mono-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
-;; (set-frame-font "-*-Inconsolata-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
-;; (set-frame-font "-*-Office Code Pro D-light-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+;;(set-frame-font "-*-PT Mono-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 
 (defun global-text-scale-adjust (inc)
   (interactive)
@@ -240,6 +236,7 @@
   (yas-minor-mode 1) ; for adding require/use/import
   ;; this does C-c C-ret, so: ???
   (cljr-add-keybindings-with-prefix "C-c C-m")
+  (define-key clojure-mode-map (kbd "C-c C-m d d") 'cider-debug-defun-at-point)
   (progn (defun clojure-test-filename ()
            (concat (projectile-project-root)
                    "test/clj"
@@ -339,14 +336,18 @@
 (add-hook 'web-mode-hook  'emmet-mode)
 (setq emmet-preview-default t)
 
+(global-set-key (kbd "C-c n") 'crux-indent-defun)
+
 (require 'clj-refactor)
 (add-hook 'clojure-mode-hook
           (lambda ()
             (eldoc-mode 1)
             (define-key clojure-mode-map (kbd "C-c C-w") nil)
+            (define-key clojure-mode-map (kbd "C-c n") nil)
             (clj-refactor-mode 1)
             (cljr-add-keybindings-with-prefix "C-c C-m")
-            (local-set-key (kbd ";") 'sp-comment)))
+            (local-set-key (kbd ";") 'sp-comment)
+            ))
 (add-hook 'cider-mode-map
           (lambda ()
             (eldoc-mode 1)
@@ -509,6 +510,8 @@
   (my-increment-number-decimal (if arg (- arg) -1)))
 
 (global-set-key (kbd "C-c -") 'my-decrement-number-decimal)
+
+(global-set-key (kbd "C-c C-SPC") 'helm-all-mark-rings)
 
 (defun lighten-color-at-point (&optional pct)
   (interactive "p")
