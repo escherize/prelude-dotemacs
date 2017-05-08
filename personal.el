@@ -1,10 +1,8 @@
 ;; use-package installation:
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+(add-to-list 'package-archives'("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives'("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
 (package-initialize)
 ;; Bootstrap `use-package'
 (unless (package-installed-p 'use-package)
@@ -12,21 +10,40 @@
   (package-install 'use-package))
 (message "use-package Installed!")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; non use-package stuff
+;;;;;;;;;;;;;;;;;;;;
 
-;; non-package stuff
+(setq web-mode-markup-indent-offset 2)
+
 (setq whitespace-line-column 100)
 (global-whitespace-mode 1)
+(linum-mode 1)
 
-;; package stuff
+(add-to-list 'auto-mode-alist '("\\.css.pp\\'" . css-mode))
+(add-to-list 'auto-mode-alist '("\\.pmd\\'" . markdown-mode))
 
+(defun lozenge ()
+  (interactive)
+  (insert-char 9674))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; use-package stuff
+;;;;;;;;;;;;;;;;
 (use-package color-theme-sanityinc-solarized :ensure t :disabled t
   :init (load-theme 'sanityinc-solarized-dark))
 
-(use-package color-theme-sanityinc-tomorrow :ensure t ;; :disabled t
+(use-package color-theme-sanityinc-tomorrow :ensure t :disabled t
   :init (load-theme 'sanityinc-tomorrow-eighties))
 
 (use-package cyberpunk-theme :ensure t :disabled t
   :init (load-theme 'cyberpunk))
+
+(use-package dracula-theme :ensure t ;;:disabled t
+  :init (load-theme 'dracula))
+
+
 
 (use-package htmlize :ensure t)
 
@@ -45,7 +62,7 @@
     (setq helm-ff-skip-boring-files t))
   :bind (("C-x f" . helm-for-files)))
 
-(use-package cider :ensure t :pin melpa-stable)
+(use-package cider :ensure t :pin melpa)
 
 (use-package ox-reveal
   :ensure t
@@ -87,16 +104,37 @@
             (cljr-add-keybindings-with-prefix "C-c C-m"))
           (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)))
 
-(use-package linum-relative
-  :ensure t
-  :init (progn
-          (require 'linum-relative)
-          (linum-relative-mode 1)))
-
 (use-package wsd-mode
   :ensure t
   :init (progn
           (require 'wsd-mode)
           (add-hook 'wsd-mode-hook 'company-mode)))
 
-(find-file "~/rokt/rokt.org")
+(use-package idle-highlight-mode
+  :ensure t
+  :init (progn
+          (idle-highlight-mode 1)))
+
+
+(use-package rust-mode
+  :ensure t
+  :init (progn
+          (add-hook 'rust-mode-hook #'racer-mode)))
+
+(use-package company :ensure t)
+
+(use-package racer
+  :ensure t
+  :init (progn
+          (require 'rust-mode)
+          (add-hook 'racer-mode-hook #'eldoc-mode)
+          (add-hook 'racer-mode-hook #'company-mode)
+
+          (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+          (setq company-tooltip-align-annotations t)))
+
+(use-package racket-mode
+  :ensure t
+  :init (progn (add-to-list 'auto-mode-alist '("\\.pp\\'" . racket-mode))))
+
+(find-file "~/dv/todo.org")
