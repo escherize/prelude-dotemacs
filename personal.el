@@ -49,6 +49,7 @@
 
 (use-package multiple-cursors
   :ensure t
+  :init (progn (setq mc/list-file "./.mc-lists.el"))
   :bind (("C->"     . mc/mark-next-like-this)
          ("C-<"     . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)))
@@ -70,23 +71,23 @@
   (progn
     (setq org-reveal-root "./reveal.js")
     (setq org-publish-project-alist
-      '(("escherize"
-         ;;"org-static-escherize"
-         :components ("org-escherize"))
-        ("org-escherize"
-         ;; Path to Jekyll project.
-         :publishing-directory "~/dv/escherize-blog/_posts"
-         ;; Path to org files.
-         :base-directory "~/dv/escherize-blog/_org/"
-         :base-extension "org"
-         :recursive t
-         :publishing-function org-html-publish-to-html
-         :headline-levels 4
-         :html-extension "md"
-         :with-section-numbers nil
-         :table-of-contents nil
-         ;; Only export section between <body> </body>
-         :body-only t)))))
+          '(("escherize"
+             ;;"org-static-escherize"
+             :components ("org-escherize"))
+            ("org-escherize"
+             ;; Path to Jekyll project.
+             :publishing-directory "~/dv/escherize-blog/_posts"
+             ;; Path to org files.
+             :base-directory "~/dv/escherize-blog/_org/"
+             :base-extension "org"
+             :recursive t
+             :publishing-function org-html-publish-to-html
+             :headline-levels 4
+             :html-extension "md"
+             :with-section-numbers nil
+             :table-of-contents nil
+             ;; Only export section between <body> </body>
+             :body-only t)))))
 
 (use-package elpy
   :ensure t
@@ -137,4 +138,7 @@
   :ensure t
   :init (progn (add-to-list 'auto-mode-alist '("\\.pp\\'" . racket-mode))))
 
-(find-file "~/dv/todo.org")
+(use-package dumb-jump
+  :ensure t)
+
+(find-file "~/todo.org")
