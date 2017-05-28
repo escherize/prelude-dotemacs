@@ -63,7 +63,14 @@
     (setq helm-ff-skip-boring-files t))
   :bind (("C-x f" . helm-for-files)))
 
-(use-package cider :ensure t :pin melpa)
+(use-package clojure-mode
+  :ensure t
+  :config (progn
+            (define-clojure-indent
+              (render  '(:defn))
+              (ident   '(:defn))
+              (query   '(:defn))
+              (params  '(:defn)))))
 
 (use-package ox-reveal
   :ensure t
@@ -141,4 +148,37 @@
 (use-package dumb-jump
   :ensure t)
 
-(find-file "~/todo.org")
+(use-package webpaste
+  :ensure t
+  :bind (("C-c C-p C-b" . webpaste-paste-buffer)
+         ("C-c C-p C-r" . webpaste-paste-region)))
+
+(defun transmit-connect-nrepls ()
+  (interactive)
+  (cider-connect "localhost" "7666" "~/g9/transmit-desktop/transmit-client")
+  (cider-connect "localhost" "7667" "~/g9/transmit-desktop/transmit-jvm"))
+
+;; todo
+;;
+
+(defun client-connect-transmit ()
+  (interactive)
+  (insert-string "(do (use 'figwheel-sidecar.repl-api) (cljs-repl))"))
+
+
+(defun big-er ()
+  (interactive)
+  (text-scale-set 1)
+  (global-text-scale-adjust 0.25))
+
+(defun lil-er ()
+  (interactive)
+  (text-scale-set 1)
+  (global-text-scale-adjust -0.25))
+
+(setq cider-cljs-lein-repl
+      "(do (require 'figwheel-sidecar.repl-api)
+           (figwheel-sidecar.repl-api/start-figwheel!)
+           (figwheel-sidecar.repl-api/cljs-repl))")
+
+(find-file "~/g9/todo.org")
