@@ -14,6 +14,39 @@
 ;; non use-package stuff
 ;;;;;;;;;;;;;;;;;;;;
 
+(setq recenter-positions '(middle 0.05 0.93))
+
+
+;; fixing font size
+
+(setq original-font-size 14)
+(setq font-size original-font-size)
+(setq original-font-name "Source Code Pro")
+
+(defun change-font-size (f m)
+  (setq font-size (funcall f font-size))
+  (set-default-font
+   (format "%s-%d" original-font-name font-size)
+   t t)
+  (message (format "%s %d" m font-size)))
+
+(defun increase-font-size ()
+  (interactive)
+  (change-font-size '(lambda (x) (+ 1 x)) "Increasing font size to:"))
+
+(defun decrese-font-size ()
+  (interactive)
+  (change-font-size '(lambda (x) (- x 1)) "Decreasing font size to:"))
+
+(defun reset-font-size ()
+  (interactive)
+  (change-font-size '(lambda (x) original-font-size)
+   "Resetting font size to original value:"))
+
+(global-set-key (kbd "C--") 'decrese-font-size)
+(global-set-key (kbd "C-+") 'increase-font-size)
+(global-set-key (kbd "C-x C-0") 'reset-font-size)
+
 (setq web-mode-markup-indent-offset 2)
 
 (setq whitespace-line-column 100)
@@ -44,6 +77,11 @@
   :init (load-theme 'dracula))
 
 
+(use-package magit
+  :ensure t
+  :init (progn
+          (setq magit-commit-show-diff nil)
+          (setq magit-revert-buffers 1)))
 
 (use-package htmlize :ensure t)
 
@@ -67,10 +105,25 @@
   :ensure t
   :config (progn
             (define-clojure-indent
-              (render  '(:defn))
-              (ident   '(:defn))
-              (query   '(:defn))
-              (params  '(:defn)))))
+              (button '(:defn))
+              (card '(:defn))
+              (componentDidMount '(:defn))
+              (componentWillMount '(:defn))
+              (dnd-drop-card '(:defn))
+              (dnd-hover-card '(:defn))
+              (dropdown '(:defn))
+              (go-loop '(:defn))
+              (ident '(:defn))
+              (input '(:defn))
+              (modal '(:defn))
+              (modal-content '(:defn))
+              (params '(:defn))
+              (query '(:defn))
+              (render '(:defn))
+              (static '(:defn))
+              (text-area '(:defn))
+              (transact! '(:defn)))))
+
 
 (use-package ox-reveal
   :ensure t
@@ -153,13 +206,21 @@
   :bind (("C-c C-p C-b" . webpaste-paste-buffer)
          ("C-c C-p C-r" . webpaste-paste-region)))
 
+(use-package fill-column-indicator
+  :ensure t
+  :init (progn
+          (require 'fill-column-indicator)
+          (setq fci-rule-column 80)
+          (turn-on-fci-mode)))
+
+;; end use-package
+
+
 (defun transmit-connect-nrepls ()
   (interactive)
   (cider-connect "localhost" "7666" "~/g9/transmit-desktop/transmit-client")
   (cider-connect "localhost" "7667" "~/g9/transmit-desktop/transmit-jvm"))
 
-;; todo
-;;
 
 (defun client-connect-transmit ()
   (interactive)
