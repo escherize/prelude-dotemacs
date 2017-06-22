@@ -17,7 +17,9 @@
 (setq recenter-positions '(middle 0.05 0.93))
 
 
-;; fixing font size
+(global-linum-mode 't)
+
+;; fixing font size with linum-mode
 
 (setq original-font-size 14)
 (setq font-size original-font-size)
