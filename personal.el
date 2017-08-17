@@ -15,14 +15,16 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 (setq recenter-positions '(middle 0.05 0.93))
-
-
+(setq scroll-margin 6)
 (global-linum-mode 't)
 
 ;; fixing font size with linum-mode
 
+(defvar original-font-size)
 (setq original-font-size 14)
+(defvar font-size)
 (setq font-size original-font-size)
+(defvar original-font-name)
 (setq original-font-name "Source Code Pro")
 
 (defun change-font-size (f m)
@@ -215,33 +217,24 @@
           (setq fci-rule-column 80)
           (turn-on-fci-mode)))
 
+
+(use-package prettier-js
+  :init
+  (progn
+    (add-hook 'web-mode-hook 'prettier-js-mode)
+    (add-hook 'js2-mode-hook 'prettier-js-mode)
+    (add-hook 'before-save-hook 'prettier-js))
+  :config
+  (setq prettier-js-args '("--use-tabs" "false"
+                           "--parser" "babylon"
+                           "--print-width" "80"
+                           "--jsx-bracket-same-line" "true"
+                           "--trailing-comma" "none"
+                           "--bracket-spacing" "false")))
+
 ;; end use-package
 
+(setq org-agenda-files
+      (file-expand-wildcards "~/dv/cisco/*.org"))
 
-(defun transmit-connect-nrepls ()
-  (interactive)
-  (cider-connect "localhost" "7666" "~/g9/transmit-desktop/transmit-client")
-  (cider-connect "localhost" "7667" "~/g9/transmit-desktop/transmit-jvm"))
-
-
-(defun client-connect-transmit ()
-  (interactive)
-  (insert-string "(do (use 'figwheel-sidecar.repl-api) (cljs-repl))"))
-
-
-(defun big-er ()
-  (interactive)
-  (text-scale-set 1)
-  (global-text-scale-adjust 0.25))
-
-(defun lil-er ()
-  (interactive)
-  (text-scale-set 1)
-  (global-text-scale-adjust -0.25))
-
-(setq cider-cljs-lein-repl
-      "(do (require 'figwheel-sidecar.repl-api)
-           (figwheel-sidecar.repl-api/start-figwheel!)
-           (figwheel-sidecar.repl-api/cljs-repl))")
-
-(find-file "~/g9/todo.org")
+(find-file "~/dv/cisco/todo.org")
