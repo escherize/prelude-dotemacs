@@ -15,17 +15,17 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 (setq recenter-positions '(middle 0.05 0.93))
-(setq scroll-margin 6)
+(setq scroll-margin 3)
 (global-linum-mode 't)
 
 ;; fixing font size with linum-mode
-
 (defvar original-font-size)
-(setq original-font-size 10)
 (defvar font-size)
-(setq font-size original-font-size)
 (defvar original-font-name)
-(setq original-font-name "Fira Code")
+
+(setq original-font-size 10)
+(setq font-size original-font-size)
+(setq original-font-name "Menlo")
 
 (defun change-font-size (f m)
   (setq font-size (funcall f font-size))
@@ -60,26 +60,58 @@
 (add-to-list 'auto-mode-alist '("\\.css.pp\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.pmd\\'" . markdown-mode))
 
-(defun lozenge ()
-  (interactive)
-  (insert-char 9674))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; use-package stuff
 ;;;;;;;;;;;;;;;;
 
 (setq use-package-always-ensure t)
 
-(use-package color-theme-sanityinc-solarized :disabled t
+(use-package color-theme-sanityinc-solarized
+  :disabled t
   :init (load-theme 'sanityinc-solarized-dark))
 
-(use-package color-theme-sanityinc-tomorrow :disabled t
-  :init (load-theme 'sanityinc-tomorrow-eighties))
+(use-package color-theme-sanityinc-tomorrow
+  :disabled t
+  :init (load-theme 'sanityinc-tomorrow-night))
 
-(use-package cyberpunk-theme :disabled t :init (load-theme 'cyberpunk))
-(use-package dracula-theme ;; :disabled t
+(use-package cyberpunk-theme
+  :disabled t
+  :init (load-theme 'cyberpunk))
+
+(use-package dracula-theme
+  :disabled t
   :init (load-theme 'dracula))
+
+(use-package ample-theme
+  :disabled t
+  :init (progn
+          ;;(load-theme 'ample-flat t t)
+          ;;(enable-theme 'ample)
+          (load-theme 'ample t t)
+          (enable-theme 'ample))
+  :defer t)
+
+(use-package powerline
+  :init (require 'powerline))
+
+(use-package moe-theme
+  :init (progn
+          (require 'moe-theme)
+          ;; Show highlighted buffer-id as decoration. (Default: nil)
+          (setq moe-theme-highlight-buffer-id t)
+
+          ;; Resize titles (optional).
+          (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+          (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
+          (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
+
+          ;; Choose a color for mode-line.(Default: blue)
+          (moe-theme-set-color 'red)
+          (show-paren-mode t)
+          (setq show-paren-style 'expression)
+          ;; (moe-dark)
+          (powerline-moe-theme)
+          (moe-light)))
 
 (use-package magit
   :init
@@ -110,10 +142,6 @@
             (define-clojure-indent
               (button '(:defn))
               (card '(:defn))
-              (componentDidMount '(:defn))
-              (componentWillMount '(:defn))
-              (dnd-drop-card '(:defn))
-              (dnd-hover-card '(:defn))
               (dropdown '(:defn))
               (go-loop '(:defn))
               (ident '(:defn))
@@ -126,6 +154,22 @@
               (static '(:defn))
               (text-area '(:defn))
               (transact! '(:defn)))))
+
+(use-package clj-refactor
+  :init (progn
+          (require 'clj-refactor)
+          (defun my-clojure-mode-hook ()
+            (clj-refactor-mode 1)
+            (yas-minor-mode 1) ; for adding require/use/import statements
+            ;; This choice of keybinding leaves cider-macroexpand-1 unbound
+            (cljr-add-keybindings-with-prefix "C-c C-m"))
+          (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)))
+
+(use-package flycheck-joker
+  :init (progn
+          (require 'flycheck-joker)
+          (defun clj-joker-hook () (flycheck-mode 1))
+          (add-hook 'clojure-mode-hook #'clj-joker-hook)))
 
 (use-package ox-reveal
   :init
@@ -150,22 +194,6 @@
              ;; Only export section between <body> </body>
              :body-only t)))))
 
-(use-package elpy
-
-  :defer t
-  :init (elpy-enable))
-
-(use-package clj-refactor
-
-  :init (progn
-          (require 'clj-refactor)
-          (defun my-clojure-mode-hook ()
-            (clj-refactor-mode 1)
-            (yas-minor-mode 1) ; for adding require/use/import statements
-            ;; This choice of keybinding leaves cider-macroexpand-1 unbound
-            (cljr-add-keybindings-with-prefix "C-c C-m"))
-          (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)))
-
 (use-package wsd-mode
 
   :init (progn
@@ -183,8 +211,6 @@
   :init (progn
           (add-hook 'rust-mode-hook #'racer-mode)))
 
-(use-package company)
-
 (use-package racer
 
   :init (progn
@@ -199,11 +225,9 @@
 
   :init (progn (add-to-list 'auto-mode-alist '("\\.pp\\'" . racket-mode))))
 
-(use-package dumb-jump
-  )
+(use-package dumb-jump)
 
 (use-package webpaste
-
   :bind (("C-c C-p C-b" . webpaste-paste-buffer)
          ("C-c C-p C-r" . webpaste-paste-region)))
 
@@ -218,7 +242,7 @@
   (progn
     (add-hook 'js2-mode-hook 'prettier-js-mode)
     (add-hook 'js2-mode-hook (flycheck-mode -1))
-    ;; (add-hook 'web-mode-hook 'prettier-js-mode)
+    (add-hook 'web-mode-hook 'prettier-js-mode)
     (add-to-list 'auto-mode-alist '("\\.less\\'" . prettier-js-mode)))
   :config
   (setq prettier-js-args '("--use-tabs" "false"
@@ -245,6 +269,45 @@
 (use-package flycheck-joker
   :init (require 'flycheck-joker))
 
+(use-package helm-org-rifle
+  :init (require 'helm-org-rifle)
+  :config (progn
+            (defun cisco-org-rifle (p)
+              "When called with prefix, searches dv/org as well"
+              (interactive "P")
+              (helm-org-rifle-files
+               (if p
+                   (append (file-expand-wildcards "~/dv/org/*.org")
+                           (file-expand-wildcards "~/dv/cisco/*.org"))
+                 (file-expand-wildcards "~/dv/cisco/*.org"))))
+            (setq helm-org-rifle-show-path 't))
+  :bind (("C-M-<return>" . cisco-org-rifle)))
+
+(use-package web-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . html-mode))
+  (add-to-list 'auto-mode-alist '("\\.js*\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.less\\'" . web-mode))
+  :config
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-enable-auto-closing t)
+  (setq web-mode-engine-detection t)
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq-default indent-tabs-mode nil)
+  (setq web-mode-content-types-alist
+        '(("jsx"  . "\\.js[x]?\\'")))
+  (setq web-mode-engines-alist
+        '(("reactjs"  . "\\.js[x]?\\'"))))
+
+(use-package helm-themes
+  :config
+  (require 'helm-config)
+  (require 'helm-themes))
+
 ;; end use-package
 
 (defun helm-projectile-ag (&optional options)
@@ -260,49 +323,69 @@
 
 (global-set-key (kbd "<C-return>") 'highlight-symbol)
 
+(global-flycheck-mode -1)
+(remove-hook 'prog-mode 'flycheck-mode)
+
 ;; ======================================================================
 ;; ============================== org-mode ==============================
 ;; ======================================================================
 
-(setq org-agenda-files
-      (file-expand-wildcards "~/dv/cisco/*.org" "~/dv/org/*"))
-
+(setq org-agenda-files (file-expand-wildcards "~/dv/cisco/*.org"))
 (setq org-todo-keywords
       '((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
 
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view"
-         ((todo "IN-PROGRESS")
-          (tags-todo "+PRIORITY=\"A\"")
+         ((tags-todo "+PRIORITY=\"A\"")
+          (todo "IN-PROGRESS")
           (agenda "")
           (alltodo "")
           (todo "BLOCKED")))))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '( (shell . t)
+    (python . t)))
 
 (setq org-capture-templates
       (quote
        (("w" "Work note" entry
          (file+headline "~/dv/cisco/todo.org" "Jot")
          "* %?\nEntered on %U\n %i\n %a")
-        ("c" "Personal" entry
+        ("t" "Work todo" entry
+         (file+headline "~/dv/cisco/todo.org" "Todos")
+         "* TODO %?\nEntered on %U\n %i\n %a")
+        ("c" "Personal todo" entry
+         (file+headline "~/dv/org/todo.org" "Jot")
+         "* %?\nEntered on %U\n %i\n %a")
+        ("n" "Personal note" entry
          (file+headline "~/dv/org/notes.org" "Jot")
-         "* %?\nEntred on %U"))))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages'( (shell . t)))
+         "* %?\nEntered on %U\n %i\n %a")
+        ("p" "Programming principle" entry
+         (file+headline "~/dv/org/notes.org" "Principles")
+         "* %?       :principle:\nEntered on %U\n %i\n %a :principle:"))))
 
 (global-set-key (kbd "C-c c") 'org-capture)
 
-(defun my-org-mode-hook ()
+(defun my-org-mode-prefs ()
   (progn
     (flycheck-mode -1)
     (whitespace-mode -1)
     (visual-line-mode 1)))
 
-(add-hook 'org-mode-hook 'my-org-mode-hook)
+(add-hook 'org-mode-hook 'my-org-mode-prefs)
+
+(global-hl-line-mode -1)
 
 ;; ======================================================================
 ;; ========================== end org-mode ==============================
 ;; ======================================================================
-(find-file "~/dv/cisco/todo.org")
+(defun work-notes ()
+  (interactive)
+  (progn (find-file "~/dv/cisco/todo.org")))
 
-(server-start)
+(defun my-notes ()
+  (interactive)
+  (progn (find-file "~/dv/org/notes.org")))
+
+(setq vc-handled-backends nil)
