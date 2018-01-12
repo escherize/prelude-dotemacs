@@ -67,7 +67,7 @@
 (setq use-package-always-ensure t)
 
 (use-package color-theme-sanityinc-solarized
-;;  :disabled t
+  :disabled t
   :init (load-theme 'sanityinc-solarized-dark))
 
 (use-package color-theme-sanityinc-tomorrow
@@ -90,6 +90,28 @@
           (load-theme 'ample t t)
           (enable-theme 'ample))
   :defer t)
+
+(use-package powerline
+  :init (require 'powerline))
+
+(use-package moe-theme
+  :init (progn
+          (require 'moe-theme)
+          ;; Show highlighted buffer-id as decoration. (Default: nil)
+          (setq moe-theme-highlight-buffer-id t)
+
+          ;; Resize titles (optional).
+          (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+          (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
+          (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
+
+          ;; Choose a color for mode-line.(Default: blue)
+          (moe-theme-set-color 'red)
+          (show-paren-mode t)
+          (setq show-paren-style 'expression)
+          ;; (moe-dark)
+          (powerline-moe-theme)
+          (moe-light)))
 
 (use-package magit
   :init
@@ -365,3 +387,5 @@
 (defun my-notes ()
   (interactive)
   (progn (find-file "~/dv/org/notes.org")))
+
+(setq vc-handled-backends nil)
