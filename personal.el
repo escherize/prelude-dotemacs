@@ -91,6 +91,8 @@
           (enable-theme 'ample))
   :defer t)
 
+(use-package markdown-mode)
+
 (use-package powerline
   :init (require 'powerline))
 
@@ -171,28 +173,28 @@
           (defun clj-joker-hook () (flycheck-mode 1))
           (add-hook 'clojure-mode-hook #'clj-joker-hook)))
 
-(use-package ox-reveal
-  :init
-  (progn
-    (setq org-reveal-root "./reveal.js")
-    (setq org-publish-project-alist
-          '(("escherize"
-             ;;"org-static-escherize"
-             :components ("org-escherize"))
-            ("org-escherize"
-             ;; Path to Jekyll project.
-             :publishing-directory "~/dv/escherize-blog/_posts"
-             ;; Path to org files.
-             :base-directory "~/dv/escherize-blog/_org/"
-             :base-extension "org"
-             :recursive t
-             :publishing-function org-html-publish-to-html
-             :headline-levels 4
-             :html-extension "md"
-             :with-section-numbers nil
-             :table-of-contents nil
-             ;; Only export section between <body> </body>
-             :body-only t)))))
+;; (use-package ox-reveal
+;;   :init
+;;   (progn
+;;     (setq org-reveal-root "./reveal.js")
+;;     (setq org-publish-project-alist
+;;           '(("escherize"
+;;              ;;"org-static-escherize"
+;;              :components ("org-escherize"))
+;;             ("org-escherize"
+;;              ;; Path to Jekyll project.
+;;              :publishing-directory "~/dv/escherize-blog/_posts"
+;;              ;; Path to org files.
+;;              :base-directory "~/dv/escherize-blog/_org/"
+;;              :base-extension "org"
+;;              :recursive t
+;;              :publishing-function org-html-publish-to-html
+;;              :headline-levels 4
+;;              :html-extension "md"
+;;              :with-section-numbers nil
+;;              :table-of-contents nil
+;;              ;; Only export section between <body> </body>
+;;              :body-only t)))))
 
 (use-package wsd-mode
 
@@ -341,11 +343,6 @@
           (agenda "")
           (alltodo "")
           (todo "BLOCKED")))))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '( (shell . t)
-    (python . t)))
 
 (setq org-capture-templates
       (quote
