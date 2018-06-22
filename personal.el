@@ -23,9 +23,12 @@
 (defvar font-size)
 (defvar original-font-name)
 
-(setq original-font-size 10)
+(setq original-font-size 14)
 (setq font-size original-font-size)
-(setq original-font-name "Menlo")
+(setq original-font-name "Fira Code")
+;;(setq original-font-name "Menlo")
+;;(setq original-font-name "Anonymous Pro")
+;;(setq original-font-name "Source Code Pro")
 
 (defun change-font-size (f m)
   (setq font-size (funcall f font-size))
@@ -59,6 +62,61 @@
 
 (add-to-list 'auto-mode-alist '("\\.css.pp\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.pmd\\'" . markdown-mode))
+
+;; ======================================================================
+;; ============================== org-mode ==============================
+;; ======================================================================
+
+(setq org-agenda-files (file-expand-wildcards "~/dv/cisco/*.org"))
+(setq org-todo-keywords'((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
+
+(setq org-agenda-custom-commands
+      '(("c" "Simple agenda view"
+         ((tags-todo "+PRIORITY=\"A\"")
+          (todo "IN-PROGRESS")
+          (agenda "")
+          (alltodo "")
+          (todo "BLOCKED")))))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '( (shell . t)
+    (python . t)))
+
+(setq org-capture-templates
+      (quote
+       (("w" "Work note" entry
+         (file+headline "~/dv/cisco/todo.org" "Jot")
+         "* %?\nEntered on %U\n %i\n %a")
+        ("t" "Work todo" entry
+         (file+headline "~/dv/cisco/todo.org" "Todos")
+         "* TODO %?\nEntered on %U\n %i\n %a")
+        ("c" "Personal todo" entry
+         (file+headline "~/dv/org/todo.org" "Jot")
+         "* %?\nEntered on %U\n %i\n %a")
+        ("n" "Personal note" entry
+         (file+headline "~/dv/org/notes.org" "Jot")
+         "* %?\nEntered on %U\n %i\n %a")
+        ("p" "Programming principle" entry
+         (file+headline "~/dv/org/notes.org" "Principles")
+         "* %?       :principle:\nEntered on %U\n %i\n %a :principle:"))))
+
+(global-set-key (kbd "C-c c") 'org-capture)
+
+(defun my-org-mode-prefs ()
+  (progn
+    (flycheck-mode -1)
+    (whitespace-mode -1)
+    (visual-line-mode 1)))
+
+(add-hook 'org-mode-hook 'my-org-mode-prefs)
+
+(global-hl-line-mode -1)
+
+;; ======================================================================
+;; ========================== end org-mode ==============================
+;; ======================================================================
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; use-package stuff
@@ -106,18 +164,37 @@
           (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
 
           ;; Choose a color for mode-line.(Default: blue)
-          (moe-theme-set-color 'red)
+          ;; colors: blue, orange, magenta, yellow, purple, red, cyan, w/b.
+          (moe-theme-random-color)
+          ;; (add-timeout 1 (lambda (x) (moe-theme-random-color)) "" 1)
+          (moe-theme-resize-font-size)
           (show-paren-mode t)
           (setq show-paren-style 'expression)
-          ;; (moe-dark)
           (powerline-moe-theme)
-          (moe-light)))
+          (moe-dark)
+          ;;(moe-light)
+          ))
+
+;; (use-package ac-cider)
+;; (use-package cider-eval-sexp-fu)
+
+(use-package cider
+  :init (setq cider-default-cljs-repl
+              "(do (require 'figwheel-sidecar.repl-api)
+(figwheel-sidecar.repl-api/start-figwheel!)
+(figwheel-sidecar.repl-api/cljs-repl))"))
 
 (use-package magit
   :init
   (progn
     (setq magit-commit-show-diff nil)
-    (setq magit-auto-revert-mode 1)))
+    (setq magit-refresh-status-buffer nil)
+    (setq magit-auto-revert-mode 1)
+    (setq auto-revert-buffer-list-filter
+          'magit-auto-revert-repository-buffers-p)
+    (setq vc-handled-backends nil)))
+
+(use-package git-gutter-fringe+)
 
 (use-package htmlize)
 
@@ -131,7 +208,7 @@
   :init
   (progn
     (require 'helm-config)
-    (setq helm-candidate-number-limit 100)
+    (setq helm-candidate-number-limit 50)
     (setq helm-ff-skip-boring-files t)
     (setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s")
     (setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'")))
@@ -195,29 +272,31 @@
              :body-only t)))))
 
 (use-package wsd-mode
-
   :init (progn
           (require 'wsd-mode)
           (add-hook 'wsd-mode-hook 'company-mode)))
 
 (use-package idle-highlight-mode
-
   :init (progn
           (idle-highlight-mode 1)))
 
+(use-package flycheck-rust)
 
 (use-package rust-mode
-
   :init (progn
-          (add-hook 'rust-mode-hook #'racer-mode)))
+          (setq racer-cmd "~/.cargo/bin/racer") ;; Rustup binaries PATH
+          (setq racer-rust-src-path "~/dv/rust/src") ;; Rust source code PATH
+          (add-hook 'rust-mode-hook #'racer-mode)
+          (add-hook 'racer-mode-hook #'eldoc-mode)
+          (add-hook 'racer-mode-hook #'company-mode)))
+
+(use-package cargo)
 
 (use-package racer
-
   :init (progn
           (require 'rust-mode)
           (add-hook 'racer-mode-hook #'eldoc-mode)
           (add-hook 'racer-mode-hook #'company-mode)
-
           (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
           (setq company-tooltip-align-annotations t)))
 
@@ -264,7 +343,8 @@
   :init
   (add-to-list 'company-backends 'company-restclient))
 
-(use-package highlight-symbol)
+(use-package highlight-symbol
+  :bind ("<C-return>" . highlight-symbol))
 
 (use-package flycheck-joker
   :init (require 'flycheck-joker))
@@ -308,6 +388,13 @@
   (require 'helm-config)
   (require 'helm-themes))
 
+(use-package git-link
+  :config
+  (add-to-list 'git-link-remote-alist
+               '("github\\.threatbuild\\.com" git-link-github))
+  (setq git-link-default-branch "master")
+  (global-set-key (kbd "C-c g l") 'git-link))
+
 ;; end use-package
 
 (defun helm-projectile-ag (&optional options)
@@ -321,66 +408,14 @@
         (error "You're not in a project"))
     (error "helm-ag not available")))
 
-(global-set-key (kbd "<C-return>") 'highlight-symbol)
-
 (global-flycheck-mode -1)
 (remove-hook 'prog-mode 'flycheck-mode)
 
-;; ======================================================================
-;; ============================== org-mode ==============================
-;; ======================================================================
-
-(setq org-agenda-files (file-expand-wildcards "~/dv/cisco/*.org"))
-(setq org-todo-keywords
-      '((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
-
-(setq org-agenda-custom-commands
-      '(("c" "Simple agenda view"
-         ((tags-todo "+PRIORITY=\"A\"")
-          (todo "IN-PROGRESS")
-          (agenda "")
-          (alltodo "")
-          (todo "BLOCKED")))))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '( (shell . t)
-    (python . t)))
-
-(setq org-capture-templates
-      (quote
-       (("w" "Work note" entry
-         (file+headline "~/dv/cisco/todo.org" "Jot")
-         "* %?\nEntered on %U\n %i\n %a")
-        ("t" "Work todo" entry
-         (file+headline "~/dv/cisco/todo.org" "Todos")
-         "* TODO %?\nEntered on %U\n %i\n %a")
-        ("c" "Personal todo" entry
-         (file+headline "~/dv/org/todo.org" "Jot")
-         "* %?\nEntered on %U\n %i\n %a")
-        ("n" "Personal note" entry
-         (file+headline "~/dv/org/notes.org" "Jot")
-         "* %?\nEntered on %U\n %i\n %a")
-        ("p" "Programming principle" entry
-         (file+headline "~/dv/org/notes.org" "Principles")
-         "* %?       :principle:\nEntered on %U\n %i\n %a :principle:"))))
-
-(global-set-key (kbd "C-c c") 'org-capture)
-
-(defun my-org-mode-prefs ()
-  (progn
-    (flycheck-mode -1)
-    (whitespace-mode -1)
-    (visual-line-mode 1)))
-
-(add-hook 'org-mode-hook 'my-org-mode-prefs)
-
-(global-hl-line-mode -1)
-
-;; ======================================================================
-;; ========================== end org-mode ==============================
-;; ======================================================================
 (defun work-notes ()
+  (interactive)
+  (progn (find-file "~/dv/cisco/notes.org")))
+
+(defun todo ()
   (interactive)
   (progn (find-file "~/dv/cisco/todo.org")))
 
@@ -388,4 +423,26 @@
   (interactive)
   (progn (find-file "~/dv/org/notes.org")))
 
+(defun diminish-all ()
+  (interactive)
+  (diminish 'which-key-mode "") (diminish 'prelude-mode "") (diminish 'auto-revert-mode "") (diminish 'smartparens-mode "") (diminish 'projectile-mode "") (diminish 'whitespace-newline-mode "") (diminish 'whitespace-mode "") (diminish 'global-whitespace-mode "") (diminish 'editorconfig-mode "") (diminish 'helm-mode "") (diminish 'company-mode "") (diminish 'clj-refactor-mode "") (diminish 'yas-minor-mode "") (diminish 'clj-refactor-mode "") (diminish 'org-cdlatex-mode "") (diminish 'beacon-mode "") (diminish 'guru-mode "") (diminish 'flycheck-mode "fc") (diminish 'cider-mode "cider") (diminish 'clj-refactor-mode "")
+  (message "Minor modes Diminished."))
+
+(diminish-all)
+
 (setq vc-handled-backends nil)
+
+(defun toggle-frame-split ()
+  "If the frame is split vertically, split it horizontally or vice versa.
+Assumes that the frame is only split into two."
+  (interactive)
+  (unless (= (length (window-list)) 2) (error "Can only toggle a frame split in two"))
+  (let ((split-vertically-p (window-combined-p)))
+    (delete-window) ; closes current window
+    (if split-vertically-p
+        (split-window-horizontally)
+      (split-window-vertically)) ; gives us a split with the other window twice
+    (switch-to-buffer nil))) ; restore the original window in this part of the frame
+
+;; I don't use the default binding of 'C-x 5', so use toggle-frame-split instead
+(global-set-key (kbd "C-x C-|") 'toggle-frame-split)
