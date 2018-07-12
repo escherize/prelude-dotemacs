@@ -68,7 +68,7 @@
 ;; ======================================================================
 
 (setq org-agenda-files (file-expand-wildcards "~/dv/cisco/*.org"))
-(setq org-todo-keywords'((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
+(setq org-todo-keywords'((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE")))
 
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view"
@@ -210,9 +210,10 @@
     (require 'helm-config)
     (setq helm-candidate-number-limit 50)
     (setq helm-ff-skip-boring-files t)
-    (setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s")
+    (setq helm-grep-ag-command "rg --color=always \ --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s")
     (setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'")))
   :bind (("C-x f" . helm-for-files)))
+
 
 (use-package clojure-mode
   :config (progn

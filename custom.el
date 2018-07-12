@@ -13,7 +13,7 @@
  '(dumb-jump-mode t)
  '(dumb-jump-prefer-searcher (quote rg))
  '(dumb-jump-selector (quote helm))
- '(helm-ag-base-command "rg --no-heading")
+ '(helm-ag-base-command "rg-wrapper --vimgrep --no-heading --smart-case")
  '(helm-ag-command-option nil)
  '(helm-ag-insert-at-point (quote symbol))
  '(helm-ag-use-temp-buffer t)
@@ -44,7 +44,7 @@
  '(org-startup-folded nil)
  '(package-selected-packages
    (quote
-    (git-link org-brain cider helm-clojuredocs git-gutter-fringe+ moe-theme powerline applescript-mode ample-theme helm-themes helm-org-rifle :init org-plus-contrib org-mode flycheck-joker restclient-helm lorem-ipsum highlight-symbol inf-clojure lua-mode rg projectile-ripgrep company-restclient restclient less-css-mode ido-completing-read+ avy prettier-js github-browse-file emmet-mode clj-refactor clojure-mode yasnippet yaml-mode plantuml-mode smbc fill-column-indicator elm-mode webpaste apples-mode dumb-jump rust-mode multiple-cursors dracula-theme anaconda-mode coffee-mode helm zop-to-char zenburn-theme wsd-mode which-key volatile-highlights vkill use-package undo-tree smex smartrep smartparens smart-mode-line rainbow-mode rainbow-delimiters racket-mode racer puppet-mode projectile ox-reveal ov operate-on-number move-text markdown-mode magit linum-relative json-mode js2-mode imenu-anywhere ido-ubiquitous idle-highlight-mode htmlize highlight-parentheses guru-mode grizzl god-mode gitignore-mode gitconfig-mode git-timemachine gist geiser flymake-json flycheck-rust flycheck-clojure flx-ido expand-region exec-path-from-shell elpy elisp-slime-nav editorconfig easy-kill dockerfile-mode discover-my-major diff-hl cyberpunk-theme csv-mode crux color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized cargo browse-kill-ring beacon anzu ace-window 2048-game)))
+    (evil-commentary evil-tutor evil auto-yasnippet tide rjsx-mode git-link org-brain cider helm-clojuredocs git-gutter-fringe+ moe-theme powerline applescript-mode ample-theme helm-themes helm-org-rifle :init org-plus-contrib org-mode flycheck-joker restclient-helm lorem-ipsum highlight-symbol inf-clojure lua-mode rg projectile-ripgrep company-restclient restclient less-css-mode ido-completing-read+ avy prettier-js github-browse-file emmet-mode clj-refactor clojure-mode yasnippet yaml-mode plantuml-mode smbc fill-column-indicator elm-mode webpaste apples-mode dumb-jump rust-mode multiple-cursors dracula-theme anaconda-mode coffee-mode helm zop-to-char zenburn-theme wsd-mode which-key volatile-highlights vkill use-package undo-tree smex smartrep smartparens smart-mode-line rainbow-mode rainbow-delimiters racket-mode racer puppet-mode projectile ox-reveal ov operate-on-number move-text markdown-mode magit linum-relative json-mode js2-mode imenu-anywhere ido-ubiquitous idle-highlight-mode htmlize highlight-parentheses guru-mode grizzl god-mode gitignore-mode gitconfig-mode git-timemachine gist geiser flymake-json flycheck-rust flycheck-clojure flx-ido expand-region exec-path-from-shell elpy elisp-slime-nav editorconfig easy-kill dockerfile-mode discover-my-major diff-hl cyberpunk-theme csv-mode crux color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized cargo browse-kill-ring beacon anzu ace-window 2048-game)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(recenter-positions (quote (middle 0.05 0.93)))
  '(safe-local-variable-values (quote ((clojure-indent-style . 0))))
@@ -58,4 +58,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((((class color) (min-colors 4096)) (:foreground "#5f5f5f" :background "#fdfde7")) (((class color) (min-colors 256)) (:foreground "#5f5f5f" :background "#fdfde7")) (((class color) (min-colors 89)) (:foreground "#5f5f5f" :background "#fdfde7")))))
