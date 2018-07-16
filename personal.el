@@ -243,6 +243,21 @@
             (cljr-add-keybindings-with-prefix "C-c C-m"))
           (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)))
 
+(use-package tide
+  :init (progn
+          (defun setup-tide-mode ()
+            (interactive)
+            (tide-setup)
+            (flycheck-mode +1)
+            (setq flycheck-check-syntax-automatically '(save mode-enabled))
+            (eldoc-mode +1)
+            (tide-hl-identifier-mode +1)
+            ;; company is an optional dependency. You have to
+            ;; install it separately via package-install
+            ;; `M-x package-install [ret] company`
+            (company-mode +1))
+          (add-hook 'web-mode-hook #'setup-tide-mode)))
+
 (use-package flycheck-joker
   :init (progn
           (require 'flycheck-joker)
