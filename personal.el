@@ -14,20 +14,19 @@
 ;; non use-package stuff
 ;;;;;;;;;;;;;;;;;;;;
 
-(setq recenter-positions '(middle 0.05 0.93))
+(setq recenter-positions '(middle 0.03 0.96))
 (setq scroll-margin 3)
-(global-linum-mode 't)
 
 ;; fixing font size with linum-mode
 (defvar original-font-size)
 (defvar font-size)
 (defvar original-font-name)
 
-(setq original-font-size 14)
+(setq original-font-size 16)
 (setq font-size original-font-size)
-(setq original-font-name "Fira Code")
+;;(setq original-font-name "Fira Code")
 ;;(setq original-font-name "Menlo")
-;;(setq original-font-name "Anonymous Pro")
+(setq original-font-name "Anonymous Pro")
 ;;(setq original-font-name "Source Code Pro")
 
 (defun change-font-size (f m)
@@ -50,6 +49,8 @@
   (change-font-size '(lambda (x) original-font-size)
                     "Resetting font size to original value:"))
 
+(reset-font-size)
+
 (global-set-key (kbd "C--") 'decrese-font-size)
 (global-set-key (kbd "C-+") 'increase-font-size)
 (global-set-key (kbd "C-x C-0") 'reset-font-size)
@@ -67,56 +68,6 @@
 ;; ============================== org-mode ==============================
 ;; ======================================================================
 
-(setq org-agenda-files (file-expand-wildcards "~/dv/cisco/*.org"))
-(setq org-todo-keywords'((sequence "TODO" "IN-PROGRESS" "BLOCKED" "|" "DONE")))
-
-(setq org-agenda-custom-commands
-      '(("c" "Simple agenda view"
-         ((tags-todo "+PRIORITY=\"A\"")
-          (todo "IN-PROGRESS")
-          (agenda "")
-          (alltodo "")
-          (todo "BLOCKED")))))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '( (shell . t)
-    (python . t)))
-
-(setq org-capture-templates
-      (quote
-       (("w" "Work note" entry
-         (file+headline "~/dv/cisco/todo.org" "Jot")
-         "* %?\nEntered on %U\n %i\n %a")
-        ("t" "Work todo" entry
-         (file+headline "~/dv/cisco/todo.org" "Todos")
-         "* TODO %?\nEntered on %U\n %i\n %a")
-        ("c" "Personal todo" entry
-         (file+headline "~/dv/org/todo.org" "Jot")
-         "* %?\nEntered on %U\n %i\n %a")
-        ("n" "Personal note" entry
-         (file+headline "~/dv/org/notes.org" "Jot")
-         "* %?\nEntered on %U\n %i\n %a")
-        ("p" "Programming principle" entry
-         (file+headline "~/dv/org/notes.org" "Principles")
-         "* %?       :principle:\nEntered on %U\n %i\n %a :principle:"))))
-
-(global-set-key (kbd "C-c c") 'org-capture)
-
-(defun my-org-mode-prefs ()
-  (progn
-    (flycheck-mode -1)
-    (whitespace-mode -1)
-    (visual-line-mode 1)))
-
-(add-hook 'org-mode-hook 'my-org-mode-prefs)
-
-(global-hl-line-mode -1)
-
-;; ======================================================================
-;; ========================== end org-mode ==============================
-;; ======================================================================
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; use-package stuff
@@ -124,39 +75,38 @@
 
 (setq use-package-always-ensure t)
 
-(use-package color-theme-sanityinc-solarized
-  :disabled t
-  :init (load-theme 'sanityinc-solarized-dark))
+;; (use-package color-theme-sanityinc-solarized
+;;   :disabled t
+;;   :init (load-theme 'sanityinc-solarized-dark))
 
-(use-package color-theme-sanityinc-tomorrow
-  :disabled t
-  :init (load-theme 'sanityinc-tomorrow-night))
+;; (use-package color-theme-sanityinc-tomorrow
+;;   :disabled t
+;;   :init (load-theme 'sanityinc-tomorrow-night))
 
-(use-package cyberpunk-theme
-  :disabled t
-  :init (load-theme 'cyberpunk))
+;; (use-package cyberpunk-theme
+;;   :disabled t
+;;   :init (load-theme 'cyberpunk))
 
-(use-package dracula-theme
-  :disabled t
-  :init (load-theme 'dracula))
+;; (use-package dracula-theme
+;;   :disabled t
+;;   :init (load-theme 'dracula))
 
-(use-package ample-theme
-  :disabled t
-  :init (progn
-          ;;(load-theme 'ample-flat t t)
-          ;;(enable-theme 'ample)
-          (load-theme 'ample t t)
-          (enable-theme 'ample))
-  :defer t)
+;; (use-package ample-theme
+;;   :disabled t
+;;   :init (progn
+;;           ;;(load-theme 'ample-flat t t)
+;;           ;;(enable-theme 'ample)
+;;           (load-theme 'ample t t)
+;;           (enable-theme 'ample))
+;;   :defer t)
 
-(use-package powerline
-  :init (require 'powerline))
+(use-package powerline :init (require 'powerline))
 
 (use-package moe-theme
   :init (progn
           (require 'moe-theme)
           ;; Show highlighted buffer-id as decoration. (Default: nil)
-          (setq moe-theme-highlight-buffer-id t)
+          (setq moe-theme-highlight-buffer-id nil)
 
           ;; Resize titles (optional).
           (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
@@ -166,23 +116,16 @@
           ;; Choose a color for mode-line.(Default: blue)
           ;; colors: blue, orange, magenta, yellow, purple, red, cyan, w/b.
           (moe-theme-random-color)
-          ;; (add-timeout 1 (lambda (x) (moe-theme-random-color)) "" 1)
           (moe-theme-resize-font-size)
           (show-paren-mode t)
-          (setq show-paren-style 'expression)
+          (setq show-paren-style 'mixed)
+          (setq show-paren-delay 0.125)
+
           (powerline-moe-theme)
-          (moe-dark)
-          ;;(moe-light)
-          ))
+          (moe-dark)))
 
 ;; (use-package ac-cider)
 ;; (use-package cider-eval-sexp-fu)
-
-(use-package cider
-  :init (setq cider-default-cljs-repl
-              "(do (require 'figwheel-sidecar.repl-api)
-(figwheel-sidecar.repl-api/start-figwheel!)
-(figwheel-sidecar.repl-api/cljs-repl))"))
 
 (use-package magit
   :init
@@ -193,8 +136,6 @@
     (setq auto-revert-buffer-list-filter
           'magit-auto-revert-repository-buffers-p)
     (setq vc-handled-backends nil)))
-
-(use-package git-gutter-fringe+)
 
 (use-package htmlize)
 
@@ -214,131 +155,96 @@
     (setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'")))
   :bind (("C-x f" . helm-for-files)))
 
+;; (use-package tide
+;;   :init (progn
+;;           (defun setup-tide-mode ()
+;;             (interactive)
+;;             (tide-setup)
+;;             (flycheck-mode +1)
+;;             (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;             (eldoc-mode +1)
+;;             (tide-hl-identifier-mode +1)
+;;             ;; company is an optional dependency. You have to
+;;             ;; install it separately via package-install
+;;             ;; `M-x package-install [ret] company`
+;;             (company-mode +1))
+;;           (add-hook 'web-mode-hook #'setup-tide-mode)))
 
-(use-package clojure-mode
-  :config (progn
-            (define-clojure-indent
-              (button '(:defn))
-              (card '(:defn))
-              (dropdown '(:defn))
-              (go-loop '(:defn))
-              (ident '(:defn))
-              (input '(:defn))
-              (modal '(:defn))
-              (modal-content '(:defn))
-              (params '(:defn))
-              (query '(:defn))
-              (render '(:defn))
-              (static '(:defn))
-              (text-area '(:defn))
-              (transact! '(:defn)))))
-
-(use-package clj-refactor
-  :init (progn
-          (require 'clj-refactor)
-          (defun my-clojure-mode-hook ()
-            (clj-refactor-mode 1)
-            (yas-minor-mode 1) ; for adding require/use/import statements
-            ;; This choice of keybinding leaves cider-macroexpand-1 unbound
-            (cljr-add-keybindings-with-prefix "C-c C-m"))
-          (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)))
-
-(use-package tide
-  :init (progn
-          (defun setup-tide-mode ()
-            (interactive)
-            (tide-setup)
-            (flycheck-mode +1)
-            (setq flycheck-check-syntax-automatically '(save mode-enabled))
-            (eldoc-mode +1)
-            (tide-hl-identifier-mode +1)
-            ;; company is an optional dependency. You have to
-            ;; install it separately via package-install
-            ;; `M-x package-install [ret] company`
-            (company-mode +1))
-          (add-hook 'web-mode-hook #'setup-tide-mode)))
-
-(use-package flycheck-joker
-  :init (progn
-          (require 'flycheck-joker)
-          (defun clj-joker-hook () (flycheck-mode 1))
-          (add-hook 'clojure-mode-hook #'clj-joker-hook)))
-
-(use-package ox-reveal
+(use-package company-tern
   :init
-  (progn
-    (setq org-reveal-root "./reveal.js")
-    (setq org-publish-project-alist
-          '(("escherize"
-             ;;"org-static-escherize"
-             :components ("org-escherize"))
-            ("org-escherize"
-             ;; Path to Jekyll project.
-             :publishing-directory "~/dv/escherize-blog/_posts"
-             ;; Path to org files.
-             :base-directory "~/dv/escherize-blog/_org/"
-             :base-extension "org"
-             :recursive t
-             :publishing-function org-html-publish-to-html
-             :headline-levels 4
-             :html-extension "md"
-             :with-section-numbers nil
-             :table-of-contents nil
-             ;; Only export section between <body> </body>
-             :body-only t)))))
+  (add-to-list 'company-backends 'company-tern)
+  (add-hook 'js2-mode-hook (lambda ()
+                             (tern-mode)
+                             (company-mode)))
+  :config
+  ;; use xref-js2 instead
+  (define-key tern-mode-keymap (kbd "M-.") nil)
+  (define-key tern-mode-keymap (kbd "M-,") nil))
 
-(use-package wsd-mode
-  :init (progn
-          (require 'wsd-mode)
-          (add-hook 'wsd-mode-hook 'company-mode)))
+;; (use-package skewer-mode)
 
-(use-package idle-highlight-mode
-  :init (progn
-          (idle-highlight-mode 1)))
+(use-package lsp-mode)
 
-(use-package flycheck-rust)
+(use-package lsp-rust
+  :config
+  :init
+  (with-eval-after-load 'lsp-mode
+    (setq lsp-rust-rls-command '("rustup" "run" "stable" "rls"))
+    (require 'lsp-rust)))
 
-(use-package rust-mode
-  :init (progn
-          (setq racer-cmd "~/.cargo/bin/racer") ;; Rustup binaries PATH
-          (setq racer-rust-src-path "~/dv/rust/src") ;; Rust source code PATH
-          (add-hook 'rust-mode-hook #'racer-mode)
-          (add-hook 'racer-mode-hook #'eldoc-mode)
-          (add-hook 'racer-mode-hook #'company-mode)))
+(use-package projectile
+  :init
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  :config
+  (projectile-mode +1))
 
-(use-package cargo)
+(use-package yasnippet
+  :init
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/personal/snippets" "~/.emacs.d/personal/my_snippets/"))
+  (yas-global-mode 1)
+  (yas-reload-all))
 
-(use-package racer
-  :init (progn
-          (require 'rust-mode)
-          (add-hook 'racer-mode-hook #'eldoc-mode)
-          (add-hook 'racer-mode-hook #'company-mode)
-          (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-          (setq company-tooltip-align-annotations t)))
+(use-package helm-c-yasnippet)
 
-(use-package racket-mode
+;; (use-package wsd-mode
+;;   :init (progn
+;;           (require 'wsd-mode)
+;;           (add-hook 'wsd-mode-hook 'company-mode)))
 
-  :init (progn (add-to-list 'auto-mode-alist '("\\.pp\\'" . racket-mode))))
+;; (use-package idle-highlight-mode
+;;   :init (progn
+;;           (idle-highlight-mode 1)))
+
+;; (use-package flycheck-rust)
+
+
+;; (use-package cargo)
+
+;; (use-package racket-mode
+
+;;   :init (progn (add-to-list 'auto-mode-alist '("\\.pp\\'" . racket-mode))))
 
 (use-package dumb-jump)
 
-(use-package webpaste
-  :bind (("C-c C-p C-b" . webpaste-paste-buffer)
-         ("C-c C-p C-r" . webpaste-paste-region)))
+;; (use-package webpaste
+;;   :bind (("C-c C-p C-b" . webpaste-paste-buffer)
+;;          ("C-c C-p C-r" . webpaste-paste-region)))
 
-(use-package fill-column-indicator
-  :init (progn
-          (require 'fill-column-indicator)
-          (setq fci-rule-column 80)
-          (turn-on-fci-mode)))
+;; (use-package fill-column-indicator
+;;   :init (progn
+;;           (require 'fill-column-indicator)
+;;           (setq fci-rule-column 80)
+;;           (turn-on-fci-mode)))
 
 (use-package prettier-js
   :init
   (progn
-    (add-hook 'js2-mode-hook 'prettier-js-mode)
-    (add-hook 'js2-mode-hook (flycheck-mode -1))
-    (add-hook 'web-mode-hook 'prettier-js-mode)
-    (add-to-list 'auto-mode-alist '("\\.less\\'" . prettier-js-mode)))
+    ;; (add-hook 'js2-mode-hook 'prettier-js-mode)
+    ;; (add-hook 'js2-mode-hook (flycheck-mode -1))
+    ;; (add-hook 'web-mode-hook 'prettier-js-mode)
+    ;; (add-to-list 'auto-mode-alist '("\\.less\\'" . prettier-js-mode))
+)
   :config
   (setq prettier-js-args '("--use-tabs" "false"
                            "--jsx-bracket-same-line" "true"
@@ -350,59 +256,50 @@
 (use-package zone
   :bind ("C-M-o" . zone))
 
-(use-package restclient
-  :bind
-  ("C-x M-r" . restclient-mode))
-
-(use-package company-restclient
-  :defer 5
-  :init
-  (add-to-list 'company-backends 'company-restclient))
-
 (use-package highlight-symbol
   :bind ("<C-return>" . highlight-symbol))
 
-(use-package flycheck-joker
-  :init (require 'flycheck-joker))
+;; (use-package flycheck-joker
+;;   :init (require 'flycheck-joker))
 
-(use-package helm-org-rifle
-  :init (require 'helm-org-rifle)
-  :config (progn
-            (defun cisco-org-rifle (p)
-              "When called with prefix, searches dv/org as well"
-              (interactive "P")
-              (helm-org-rifle-files
-               (if p
-                   (append (file-expand-wildcards "~/dv/org/*.org")
-                           (file-expand-wildcards "~/dv/cisco/*.org"))
-                 (file-expand-wildcards "~/dv/cisco/*.org"))))
-            (setq helm-org-rifle-show-path 't))
-  :bind (("C-M-<return>" . cisco-org-rifle)))
+;; (use-package helm-org-rifle
+;;   :init (require 'helm-org-rifle)
+;;   :config (progn
+;;             (defun cisco-org-rifle (p)
+;;               "When called with prefix, searches dv/org as well"
+;;               (interactive "P")
+;;               (helm-org-rifle-files
+;;                (if p
+;;                    (append (file-expand-wildcards "~/dv/org/*.org")
+;;                            (file-expand-wildcards "~/dv/cisco/*.org"))
+;;                  (file-expand-wildcards "~/dv/cisco/*.org"))))
+;;             (setq helm-org-rifle-show-path 't))
+;;   :bind (("C-M-<return>" . cisco-org-rifle)))
 
-(use-package web-mode
-  :init
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . html-mode))
-  (add-to-list 'auto-mode-alist '("\\.js*\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.less\\'" . web-mode))
-  :config
-  (setq web-mode-enable-auto-pairing t)
-  (setq web-mode-enable-auto-closing t)
-  (setq web-mode-engine-detection t)
-  (setq web-mode-enable-css-colorization t)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq-default indent-tabs-mode nil)
-  (setq web-mode-content-types-alist
-        '(("jsx"  . "\\.js[x]?\\'")))
-  (setq web-mode-engines-alist
-        '(("reactjs"  . "\\.js[x]?\\'"))))
+;; (use-package web-mode
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.html?\\'" . html-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.js*\\'" . web-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.less\\'" . web-mode))
+;;   :config
+;;   (setq web-mode-enable-auto-pairing t)
+;;   (setq web-mode-enable-auto-closing t)
+;;   (setq web-mode-engine-detection t)
+;;   (setq web-mode-enable-css-colorization t)
+;;   (setq web-mode-code-indent-offset 2)
+;;   (setq web-mode-markup-indent-offset 2)
+;;   (setq web-mode-css-indent-offset 2)
+;;   (setq-default indent-tabs-mode nil)
+;;   (setq web-mode-content-types-alist
+;;         '(("jsx"  . "\\.js[x]?\\'")))
+;;   (setq web-mode-engines-alist
+;;         '(("reactjs"  . "\\.js[x]?\\'"))))
 
-(use-package helm-themes
-  :config
-  (require 'helm-config)
-  (require 'helm-themes))
+;; (use-package helm-themes
+;;   :config
+;;   (require 'helm-config)
+;;   (require 'helm-themes))
 
 (use-package git-link
   :config
@@ -415,7 +312,8 @@
 
 (defun helm-projectile-ag (&optional options)
   "Helm version of projectile-ag."
-  (interactive (if current-prefix-arg (list (read-string "option: " "" 'helm-ag--extra-options-history))))
+  (interactive
+   (if current-prefix-arg (list (read-string "option: " "" 'helm-ag--extra-options-history))))
   (if (require 'helm-ag nil  'noerror)
       (if (projectile-project-p)
           (let ((helm-ag-command-option options)
@@ -423,9 +321,6 @@
             (helm-do-ag (projectile-project-root) (car (projectile-parse-dirconfig-file))))
         (error "You're not in a project"))
     (error "helm-ag not available")))
-
-(global-flycheck-mode -1)
-(remove-hook 'prog-mode 'flycheck-mode)
 
 (defun work-notes ()
   (interactive)
@@ -441,7 +336,27 @@
 
 (defun diminish-all ()
   (interactive)
-  (diminish 'which-key-mode "") (diminish 'prelude-mode "") (diminish 'auto-revert-mode "") (diminish 'smartparens-mode "") (diminish 'projectile-mode "") (diminish 'whitespace-newline-mode "") (diminish 'whitespace-mode "") (diminish 'global-whitespace-mode "") (diminish 'editorconfig-mode "") (diminish 'helm-mode "") (diminish 'company-mode "") (diminish 'clj-refactor-mode "") (diminish 'yas-minor-mode "") (diminish 'clj-refactor-mode "") (diminish 'org-cdlatex-mode "") (diminish 'beacon-mode "") (diminish 'guru-mode "") (diminish 'flycheck-mode "fc") (diminish 'cider-mode "cider") (diminish 'clj-refactor-mode "")
+  (diminish 'which-key-mode "")
+  (diminish 'prelude-mode "")
+  (diminish 'auto-revert-mode "")
+  (diminish 'smartparens-mode "")
+  (diminish 'projectile-mode "")
+  (diminish 'whitespace-newline-mode "")
+  (diminish 'whitespace-mode "")
+  (diminish 'global-whitespace-mode "")
+  (diminish 'editorconfig-mode "")
+  (diminish 'helm-mode "")
+  (diminish 'company-mode "")
+  (diminish 'clj-refactor-mode "")
+  (diminish 'yas-minor-mode "")
+  (diminish 'clj-refactor-mode "")
+  (diminish 'org-cdlatex-mode "")
+  (diminish 'beacon-mode "")
+  (diminish 'guru-mode "")
+  (diminish 'flycheck-mode "fc")
+  (diminish 'cider-mode "cider")
+  (diminish 'clj-refactor-mode "")
+  (diminish 'yasnippet-mode "")
   (message "Minor modes Diminished."))
 
 (diminish-all)

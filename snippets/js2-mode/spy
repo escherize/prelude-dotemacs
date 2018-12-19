@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: spy
+# key: spy
+# --
+
+let spy = (x) => {
+  console.log(x);
+  return x;
+};
+
+spy($1);
