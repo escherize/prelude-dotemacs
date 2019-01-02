@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: for of
+# key: forof
+# --
+for (let ${1:x} of ${2:collection}){
+    $3
+}

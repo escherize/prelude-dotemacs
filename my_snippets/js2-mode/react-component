@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: react-component
+# key: rc
+# --
+
+class ${1:ClassName} extends React.Component {
+    constructor(props){
+        super(props);
+        $2
+    }
+}
