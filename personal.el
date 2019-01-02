@@ -26,8 +26,8 @@
 (setq font-size original-font-size)
 ;;(setq original-font-name "Fira Code")
 ;;(setq original-font-name "Menlo")
-(setq original-font-name "Anonymous Pro")
-;;(setq original-font-name "Source Code Pro")
+;;(setq original-font-name "Anonymous Pro")
+(setq original-font-name "Source Code Pro")
 
 (defun change-font-size (f m)
   (setq font-size (funcall f font-size))
