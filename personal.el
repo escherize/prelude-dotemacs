@@ -111,14 +111,21 @@
           (moe-theme-set-color 'red)
           (show-paren-mode t)
           (setq show-paren-style 'expression)
-          ;; (moe-dark)
           (powerline-moe-theme)
-          (moe-light)))
+          ;;(moe-light)
+          (moe-dark)))
 
 (use-package magit
   :init
   (progn
     (setq magit-commit-show-diff nil)
+    (setq magit-refresh-status-buffer nil)
+    (setq auto-revert-buffer-list-filter
+          'magit-auto-revert-repository-buffers-p)
+    (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
+    (remove-hook 'server-switch-hook 'magit-commit-diff)
+    (setq vc-handled-backends nil)
+    (setq vc-handled-backends (delq 'Git vc-handled-backends))
     (setq magit-auto-revert-mode 1)))
 
 (use-package htmlize)
@@ -155,7 +162,26 @@
               (render '(:defn))
               (static '(:defn))
               (text-area '(:defn))
-              (transact! '(:defn)))))
+              (transact! '(:defn))
+
+              (dofor 1)
+              (forv 1)
+              (for* 1)
+              (combofor 1)
+              (and-let 1)
+              (returning 1)
+              (returning-let 1)
+              (this-as 1)
+              (synchronized 0)
+              (careful-future 0)
+              (send-off 1)
+              (debounced 1)
+              (lock-swap! 1)
+              (while-some 1)
+              (swap!)
+              ;; reframe:
+              (reg-event-fx '(:defn))
+              (reg-event-db'(:defn)))))
 
 (use-package clj-refactor
   :init (progn
@@ -214,9 +240,12 @@
           (add-hook 'rust-mode-hook #'racer-mode)))
 
 (use-package racer
-
   :init (progn
           (require 'rust-mode)
+          (setq racer-cmd "~/.cargo/bin/racer")
+          (setq racer-rust-src-path "~/dv/rust_lang/src")
+
+          (add-hook 'rust-mode-hook #'racer-mode)
           (add-hook 'racer-mode-hook #'eldoc-mode)
           (add-hook 'racer-mode-hook #'company-mode)
 
@@ -319,7 +348,8 @@
       (if (projectile-project-p)
           (let ((helm-ag-command-option options)
                 (current-prefix-arg nil))
-            (helm-do-ag (projectile-project-root) (car (projectile-parse-dirconfig-file))))
+            (helm-do-ag (projectile-project-root)
+                        (car (projectile-parse-dirconfig-file))))
         (error "You're not in a project"))
     (error "helm-ag not available")))
 
@@ -334,7 +364,12 @@
 
 (setq org-agenda-files (file-expand-wildcards "~/dv/cisco/*.org"))
 (setq org-todo-keywords
-      '((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
+      ;; '((sequence "TODO" "IN-PROGRESS" "|" "DONE"))
+      '((sequence "TODO" "|" "DONE")))
+
+(defun my-org-archive-done-tasks ()
+  (interactive)
+  (org-map-entries 'org-archive-subtree "/DONE" 'file))
 
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view"
@@ -343,6 +378,22 @@
           (agenda "")
           (alltodo "")
           (todo "BLOCKED")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Cider settings
+(defun l-cider-reset ()
+  (interactive)
+  (save-some-buffers)
+  (cider-load-buffer (get-buffer "user.clj"))
+  (cider--pprint-eval-form "(user/reset)"))
+
+(defun l-cider-reset-buffer ()
+  (interactive)
+  (cider-interactive-eval "(remove-ns (ns-name *ns*))")
+  (cider-load-buffer))
+
+(cider-register-cljs-repl-type 'supportive-cljs-repl "(cljs-repl)")
+(setq cider-default-cljs-repl 'supportive-cljs-repl)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; end
 
 (setq org-capture-templates
       (quote
@@ -386,3 +437,8 @@
   (progn (find-file "~/dv/org/notes.org")))
 
 (setq vc-handled-backends nil)
+
+(setq cider-cljs-lein-repl
+      "(do (require 'figwheel-sidecar.repl-api)
+         (figwheel-sidecar.repl-api/start-figwheel!)
+         (figwheel-sidecar.repl-api/cljs-repl))")

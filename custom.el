@@ -44,12 +44,19 @@
  '(org-startup-folded nil)
  '(package-selected-packages
    (quote
-    (moe-theme powerline applescript-mode ample-theme helm-themes helm-org-rifle :init org-plus-contrib org-mode flycheck-joker restclient-helm lorem-ipsum highlight-symbol inf-clojure lua-mode rg projectile-ripgrep company-restclient restclient less-css-mode ido-completing-read+ avy prettier-js github-browse-file emmet-mode clj-refactor clojure-mode yasnippet yaml-mode plantuml-mode smbc fill-column-indicator elm-mode webpaste apples-mode dumb-jump rust-mode multiple-cursors dracula-theme anaconda-mode coffee-mode helm zop-to-char zenburn-theme wsd-mode which-key volatile-highlights vkill use-package undo-tree smex smartrep smartparens smart-mode-line rainbow-mode rainbow-delimiters racket-mode racer puppet-mode projectile ox-reveal ov operate-on-number move-text markdown-mode magit linum-relative json-mode js2-mode imenu-anywhere ido-ubiquitous idle-highlight-mode htmlize highlight-parentheses guru-mode grizzl god-mode gitignore-mode gitconfig-mode git-timemachine gist geiser flymake-json flycheck-rust flycheck-clojure flx-ido expand-region exec-path-from-shell elpy elisp-slime-nav editorconfig easy-kill dockerfile-mode discover-my-major diff-hl cyberpunk-theme csv-mode crux color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized cargo browse-kill-ring beacon anzu ace-window 2048-game)))
+    (helm-rg lsp-ui company-lsp counsel swiper python-environment pythonic pyvenv request rich-minority s typescript-mode with-editor git-link zprint-mode tide helm-emmet rjsx-mode cider jedi moe-theme powerline applescript-mode ample-theme helm-themes helm-org-rifle :init org-plus-contrib org-mode flycheck-joker restclient-helm lorem-ipsum highlight-symbol inf-clojure lua-mode rg projectile-ripgrep company-restclient restclient less-css-mode ido-completing-read+ avy prettier-js github-browse-file emmet-mode clj-refactor clojure-mode yasnippet yaml-mode plantuml-mode smbc fill-column-indicator elm-mode webpaste apples-mode dumb-jump rust-mode multiple-cursors dracula-theme anaconda-mode coffee-mode helm zop-to-char zenburn-theme wsd-mode which-key volatile-highlights vkill use-package undo-tree smex smartrep smartparens smart-mode-line rainbow-mode rainbow-delimiters racket-mode racer puppet-mode projectile ox-reveal ov operate-on-number move-text markdown-mode magit linum-relative json-mode js2-mode imenu-anywhere ido-ubiquitous idle-highlight-mode htmlize highlight-parentheses guru-mode grizzl god-mode gitignore-mode gitconfig-mode git-timemachine gist geiser flymake-json flycheck-rust flycheck-clojure flx-ido expand-region exec-path-from-shell elpy elisp-slime-nav editorconfig easy-kill dockerfile-mode discover-my-major diff-hl cyberpunk-theme csv-mode crux color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized cargo browse-kill-ring beacon anzu ace-window 2048-game)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(recenter-positions (quote (middle 0.05 0.93)))
+ '(safe-local-variable-values
+   (quote
+    ((cljr-favor-prefix-notation)
+     (cljr-auto-clean-ns . t)
+     (bug-reference-bug-regexp . "#\\(?2:[[:digit:]]+\\)")
+     (checkdoc-package-keywords-flag))))
  '(tab-width 2)
  '(web-mode-code-indent-offset 2)
- '(web-mode-markup-indent-offset 2))
+ '(web-mode-markup-indent-offset 2)
+ '(zprint-hang t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
