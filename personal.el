@@ -100,7 +100,10 @@
 ;;           (enable-theme 'ample))
 ;;   :defer t)
 
-(use-package powerline :init (require 'powerline))
+(use-package markdown-mode)
+
+(use-package powerline
+  :init (require 'powerline))
 
 (use-package moe-theme
   :init (progn
@@ -155,31 +158,64 @@
     (setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'")))
   :bind (("C-x f" . helm-for-files)))
 
-;; (use-package tide
-;;   :init (progn
-;;           (defun setup-tide-mode ()
-;;             (interactive)
-;;             (tide-setup)
-;;             (flycheck-mode +1)
-;;             (setq flycheck-check-syntax-automatically '(save mode-enabled))
-;;             (eldoc-mode +1)
-;;             (tide-hl-identifier-mode +1)
-;;             ;; company is an optional dependency. You have to
-;;             ;; install it separately via package-install
-;;             ;; `M-x package-install [ret] company`
-;;             (company-mode +1))
-;;           (add-hook 'web-mode-hook #'setup-tide-mode)))
+(use-package clojure-mode
+  :config (progn
+            (define-clojure-indent
+              (button '(:defn))
+              (card '(:defn))
+              (dropdown '(:defn))
+              (go-loop '(:defn))
+              (ident '(:defn))
+              (input '(:defn))
+              (modal '(:defn))
+              (modal-content '(:defn))
+              (params '(:defn))
+              (query '(:defn))
+              (render '(:defn))
+              (static '(:defn))
+              (text-area '(:defn))
+              (transact! '(:defn)))))
 
-(use-package company-tern
-  :init
-  (add-to-list 'company-backends 'company-tern)
-  (add-hook 'js2-mode-hook (lambda ()
-                             (tern-mode)
-                             (company-mode)))
-  :config
-  ;; use xref-js2 instead
-  (define-key tern-mode-keymap (kbd "M-.") nil)
-  (define-key tern-mode-keymap (kbd "M-,") nil))
+(use-package clj-refactor
+  :init (progn
+          (require 'clj-refactor)
+          (defun my-clojure-mode-hook ()
+            (clj-refactor-mode 1)
+            (yas-minor-mode 1) ; for adding require/use/import statements
+            ;; This choice of keybinding leaves cider-macroexpand-1 unbound
+            (cljr-add-keybindings-with-prefix "C-c C-m"))
+          (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)))
+
+(use-package flycheck-joker
+  :init (progn
+          (require 'flycheck-joker)
+          (defun clj-joker-hook () (flycheck-mode 1))
+          (add-hook 'clojure-mode-hook #'clj-joker-hook)))
+
+;; (use-package ox-reveal
+;;   :init
+;;   (progn
+;;     (setq org-reveal-root "./reveal.js")
+;;     (setq org-publish-project-alist
+;;           '(("escherize"
+;;              ;;"org-static-escherize"
+;;              :components ("org-escherize"))
+;;             ("org-escherize"
+;;              ;; Path to Jekyll project.
+;;              :publishing-directory "~/dv/escherize-blog/_posts"
+;;              ;; Path to org files.
+;;              :base-directory "~/dv/escherize-blog/_org/"
+;;              :base-extension "org"
+;;              :recursive t
+;;              :publishing-function org-html-publish-to-html
+;;              :headline-levels 4
+;;              :html-extension "md"
+;;              :with-section-numbers nil
+;;              :table-of-contents nil
+;;              ;; Only export section between <body> </body>
+;;              :body-only t)))))
+
+(use-package wsd-mode
 
 ;; (use-package skewer-mode)
 
@@ -322,6 +358,60 @@
         (error "You're not in a project"))
     (error "helm-ag not available")))
 
+(global-set-key (kbd "<C-return>") 'highlight-symbol)
+
+(global-flycheck-mode -1)
+(remove-hook 'prog-mode 'flycheck-mode)
+
+;; ======================================================================
+;; ============================== org-mode ==============================
+;; ======================================================================
+
+(setq org-agenda-files (file-expand-wildcards "~/dv/cisco/*.org"))
+(setq org-todo-keywords
+      '((sequence "TODO" "IN-PROGRESS" "|" "DONE")))
+
+(setq org-agenda-custom-commands
+      '(("c" "Simple agenda view"
+         ((tags-todo "+PRIORITY=\"A\"")
+          (todo "IN-PROGRESS")
+          (agenda "")
+          (alltodo "")
+          (todo "BLOCKED")))))
+
+(setq org-capture-templates
+      (quote
+       (("w" "Work note" entry
+         (file+headline "~/dv/cisco/todo.org" "Jot")
+         "* %?\nEntered on %U\n %i\n %a")
+        ("t" "Work todo" entry
+         (file+headline "~/dv/cisco/todo.org" "Todos")
+         "* TODO %?\nEntered on %U\n %i\n %a")
+        ("c" "Personal todo" entry
+         (file+headline "~/dv/org/todo.org" "Jot")
+         "* %?\nEntered on %U\n %i\n %a")
+        ("n" "Personal note" entry
+         (file+headline "~/dv/org/notes.org" "Jot")
+         "* %?\nEntered on %U\n %i\n %a")
+        ("p" "Programming principle" entry
+         (file+headline "~/dv/org/notes.org" "Principles")
+         "* %?       :principle:\nEntered on %U\n %i\n %a :principle:"))))
+
+(global-set-key (kbd "C-c c") 'org-capture)
+
+(defun my-org-mode-prefs ()
+  (progn
+    (flycheck-mode -1)
+    (whitespace-mode -1)
+    (visual-line-mode 1)))
+
+(add-hook 'org-mode-hook 'my-org-mode-prefs)
+
+(global-hl-line-mode -1)
+
+;; ======================================================================
+;; ========================== end org-mode ==============================
+;; ======================================================================
 (defun work-notes ()
   (interactive)
   (progn (find-file "~/dv/cisco/notes.org")))
