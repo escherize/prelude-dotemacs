@@ -215,7 +215,6 @@
 ;;              ;; Only export section between <body> </body>
 ;;              :body-only t)))))
 
-(use-package wsd-mode
 
 ;; (use-package skewer-mode)
 
@@ -276,11 +275,7 @@
 (use-package prettier-js
   :init
   (progn
-    ;; (add-hook 'js2-mode-hook 'prettier-js-mode)
-    ;; (add-hook 'js2-mode-hook (flycheck-mode -1))
-    ;; (add-hook 'web-mode-hook 'prettier-js-mode)
-    ;; (add-to-list 'auto-mode-alist '("\\.less\\'" . prettier-js-mode))
-)
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . prettier-js-mode)))
   :config
   (setq prettier-js-args '("--use-tabs" "false"
                            "--jsx-bracket-same-line" "true"
@@ -289,11 +284,44 @@
                            "--trailing-comma" "none"
                            "--bracket-spacing" "false")))
 
+(use-package rjsx-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode)))
+
 (use-package zone
   :bind ("C-M-o" . zone))
 
 (use-package highlight-symbol
   :bind ("<C-return>" . highlight-symbol))
+
+(use-package hide-lines)
+
+(defun setup-tide-mode ()
+  (interactive)
+  (setq tide-format-options
+        '(:indentSize 2 :tabSize 2))
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M - x package - install[ret] company`
+  (company-mode +1)
+  (flycheck-add-mode 'javascript-eslint 'js2-mode)
+  (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append))
+
+(use-package tide
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
 
 ;; (use-package flycheck-joker
 ;;   :init (require 'flycheck-joker))
@@ -336,6 +364,12 @@
 ;;   :config
 ;;   (require 'helm-config)
 ;;   (require 'helm-themes))
+
+;; (use-package smartparens-mode
+;;   :config
+;;   (add-to-list 'auto-mode-alist '("\\.js\\'" . smartparens-mode)))
+
+;; (use-package smartparens-global-mode)
 
 (use-package git-link
   :config
