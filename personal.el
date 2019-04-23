@@ -57,7 +57,7 @@
 (global-set-key (kbd "C-x C-0") 'reset-font-size)
 
 (setq web-mode-markup-indent-offset 2)
-
+(setq global-hl-line-mode 'f)
 (setq whitespace-line-column 100)
 (global-whitespace-mode 1)
 (linum-mode 1)
@@ -128,10 +128,7 @@
 ;;           (powerline-moe-theme)
 ;;           (moe-dark)))
 
-
-
 (use-package doom-themes
-
   :init
   (progn
     (require 'doom-themes)
@@ -164,18 +161,18 @@
           (setq doom-modeline-minor-modes nil))
   :hook (after-init . doom-modeline-mode))
 
-;; (use-package ac-cider)
-;; (use-package cider-eval-sexp-fu)
-
 (use-package magit
   :init
   (progn
     (setq magit-commit-show-diff nil)
     (setq magit-refresh-status-buffer nil)
-    (setq magit-auto-revert-mode 1)
     (setq auto-revert-buffer-list-filter
           'magit-auto-revert-repository-buffers-p)
-    (setq vc-handled-backends nil)))
+    (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
+    (remove-hook 'server-switch-hook 'magit-commit-diff)
+    (setq vc-handled-backends nil)
+    (setq vc-handled-backends (delq 'Git vc-handled-backends))
+    (setq magit-auto-revert-mode 1)))
 
 (use-package htmlize)
 
@@ -211,7 +208,26 @@
               (render '(:defn))
               (static '(:defn))
               (text-area '(:defn))
-              (transact! '(:defn)))))
+              (transact! '(:defn))
+
+              (dofor 1)
+              (forv 1)
+              (for* 1)
+              (combofor 1)
+              (and-let 1)
+              (returning 1)
+              (returning-let 1)
+              (this-as 1)
+              (synchronized 0)
+              (careful-future 0)
+              (send-off 1)
+              (debounced 1)
+              (lock-swap! 1)
+              (while-some 1)
+              (swap!)
+              ;; reframe:
+              (reg-event-fx '(:defn))
+              (reg-event-db'(:defn)))))
 
 (use-package clj-refactor
   :init (progn
@@ -528,14 +544,14 @@
 (defun toggle-frame-split ()
   "If the frame is split vertically, split it horizontally or vice versa.
 Assumes that the frame is only split into two."
-  (interactive)
-  (unless (= (length (window-list)) 2) (error "Can only toggle a frame split in two"))
-  (let ((split-vertically-p (window-combined-p)))
-    (delete-window) ; closes current window
-    (if split-vertically-p
-        (split-window-horizontally)
-      (split-window-vertically)) ; gives us a split with the other window twice
-    (switch-to-buffer nil))) ; restore the original window in this part of the frame
+              (interactive)
+              (unless (= (length (window-list)) 2) (error "Can only toggle a frame split in two"))
+              (let ((split-vertically-p (window-combined-p)))
+                (delete-window) ; closes current window
+                (if split-vertically-p
+                    (split-window-horizontally)
+                  (split-window-vertically)) ; gives us a split with the other window twice
+                (switch-to-buffer nil))) ; restore the original window in this part of the frame
 
-;; I don't use the default binding of 'C-x 5', so use toggle-frame-split instead
-(global-set-key (kbd "C-x C-|") 'toggle-frame-split)
+            ;; I don't use the default binding of 'C-x 5', so use toggle-frame-split instead
+            (global-set-key (kbd "C-x C-|") 'toggle-frame-split)
