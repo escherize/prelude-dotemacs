@@ -22,12 +22,13 @@
 (defvar font-size)
 (defvar original-font-name)
 
-(setq original-font-size 16)
+(setq original-font-size 14)
 (setq font-size original-font-size)
 ;;(setq original-font-name "Fira Code")
+(setq original-font-name "Fira Mono")
 ;;(setq original-font-name "Menlo")
 ;;(setq original-font-name "Anonymous Pro")
-(setq original-font-name "Source Code Pro")
+;;(setq original-font-name "Source Code Pro")
 
 (defun change-font-size (f m)
   (setq font-size (funcall f font-size))
@@ -102,30 +103,66 @@
 
 (use-package markdown-mode)
 
-(use-package powerline
-  :init (require 'powerline))
+;; (use-package powerline
+;;   :init (require 'powerline))
 
-(use-package moe-theme
+;; (use-package moe-theme
+;;   :init (progn
+;;           (require 'moe-theme)
+;;           ;; Show highlighted buffer-id as decoration. (Default: nil)
+;;           (setq moe-theme-highlight-buffer-id nil)
+
+;;           ;; Resize titles (optional).
+;;           (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+;;           (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
+;;           (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
+
+;;           ;; Choose a color for mode-line.(Default: blue)
+;;           ;; colors: blue, orange, magenta, yellow, purple, red, cyan, w/b.
+;;           (moe-theme-random-color)
+;;           (moe-theme-resize-font-size)
+;;           (show-paren-mode t)
+;;           (setq show-paren-style 'mixed)
+;;           (setq show-paren-delay 0.125)
+
+;;           (powerline-moe-theme)
+;;           (moe-dark)))
+
+
+
+(use-package doom-themes
+
+  :init
+  (progn
+    (require 'doom-themes)
+
+    ;; Global settings (defaults)
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+    ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+    ;; may have their own settings.
+    (load-theme 'doom-one t)
+
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
+
+    ;; Enable custom neotree theme (all-the-icons must be installed!)
+    (doom-themes-neotree-config)
+    ;; or for treemacs users
+    (doom-themes-treemacs-config)
+
+    ;; Corrects (and improves) org-mode's native fontification.
+    (doom-themes-org-config)))
+
+(use-package doom-modeline
+  :ensure t
+  :commands doom-modeline-mode
   :init (progn
-          (require 'moe-theme)
-          ;; Show highlighted buffer-id as decoration. (Default: nil)
-          (setq moe-theme-highlight-buffer-id nil)
 
-          ;; Resize titles (optional).
-          (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
-          (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
-          (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
-
-          ;; Choose a color for mode-line.(Default: blue)
-          ;; colors: blue, orange, magenta, yellow, purple, red, cyan, w/b.
-          (moe-theme-random-color)
-          (moe-theme-resize-font-size)
-          (show-paren-mode t)
-          (setq show-paren-style 'mixed)
-          (setq show-paren-delay 0.125)
-
-          (powerline-moe-theme)
-          (moe-dark)))
+          ;; Whether display minor modes in mode-line or not.
+          (setq doom-modeline-minor-modes nil))
+  :hook (after-init . doom-modeline-mode))
 
 ;; (use-package ac-cider)
 ;; (use-package cider-eval-sexp-fu)
@@ -380,17 +417,17 @@
 
 ;; end use-package
 
-(defun helm-projectile-ag (&optional options)
-  "Helm version of projectile-ag."
-  (interactive
-   (if current-prefix-arg (list (read-string "option: " "" 'helm-ag--extra-options-history))))
-  (if (require 'helm-ag nil  'noerror)
-      (if (projectile-project-p)
-          (let ((helm-ag-command-option options)
-                (current-prefix-arg nil))
-            (helm-do-ag (projectile-project-root) (car (projectile-parse-dirconfig-file))))
-        (error "You're not in a project"))
-    (error "helm-ag not available")))
+;; (defun helm-projectile-ag (&optional options)
+;;   "Helm version of projectile-ag."
+;;   (interactive
+;;    (if current-prefix-arg (list (read-string "option: " "" 'helm-ag--extra-options-history))))
+;;   (if (require 'helm-ag nil  'noerror)
+;;       (if (projectile-project-p)
+;;           (let ((helm-ag-command-option options)
+;;                 (current-prefix-arg nil))
+;;             (helm-do-ag (projectile-project-root) (car (projectile-parse-dirconfig-file))))
+;;         (error "You're not in a project"))
+;;     (error "helm-ag not available")))
 
 (global-set-key (kbd "<C-return>") 'highlight-symbol)
 
@@ -458,32 +495,33 @@
   (interactive)
   (progn (find-file "~/dv/org/notes.org")))
 
-(defun diminish-all ()
-  (interactive)
-  (diminish 'which-key-mode "")
-  (diminish 'prelude-mode "")
-  (diminish 'auto-revert-mode "")
-  (diminish 'smartparens-mode "")
-  (diminish 'projectile-mode "")
-  (diminish 'whitespace-newline-mode "")
-  (diminish 'whitespace-mode "")
-  (diminish 'global-whitespace-mode "")
-  (diminish 'editorconfig-mode "")
-  (diminish 'helm-mode "")
-  (diminish 'company-mode "")
-  (diminish 'clj-refactor-mode "")
-  (diminish 'yas-minor-mode "")
-  (diminish 'clj-refactor-mode "")
-  (diminish 'org-cdlatex-mode "")
-  (diminish 'beacon-mode "")
-  (diminish 'guru-mode "")
-  (diminish 'flycheck-mode "fc")
-  (diminish 'cider-mode "cider")
-  (diminish 'clj-refactor-mode "")
-  (diminish 'yasnippet-mode "")
-  (message "Minor modes Diminished."))
+;; (defun diminish-all ()
+;;   (interactive)
+;;   (diminish 'which-key-mode "")
+;;   (diminish 'prelude-mode "")
+;;   (diminish 'auto-revert-mode "")
+;;   (diminish 'smartparens-mode "")
+;;   (diminish 'projectile-mode "")
+;;   (diminish 'whitespace-newline-mode "")
+;;   (diminish 'whitespace-mode "")
+;;   (diminish 'global-whitespace-mode "")
+;;   (diminish 'editorconfig-mode "")
+;;   (diminish 'helm-mode "")
+;;   (diminish 'company-mode "")
+;;   (diminish 'clj-refactor-mode "")
+;;   (diminish 'yas-minor-mode "")
+;;   (diminish 'clj-refactor-mode "")
+;;   (diminish 'org-cdlatex-mode "")
+;;   (diminish 'beacon-mode "")
+;;   (diminish 'guru-mode "")
+;;   (diminish 'flycheck-mode "fc")
+;;   (diminish 'cider-mode "cider")
+;;   (diminish 'clj-refactor-mode "")
+;;   (diminish 'yasnippet-mode "")
+;;   (message "Minor modes Diminished."))
 
-(diminish-all)
+;; (diminish-all)
+
 
 (setq vc-handled-backends nil)
 
